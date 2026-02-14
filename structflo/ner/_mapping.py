@@ -1,4 +1,5 @@
 """Maps langextract Extraction objects to typed NEREntity instances."""
+
 from __future__ import annotations
 
 import langextract as lx

@@ -1,4 +1,5 @@
 """Tests for entity dataclasses and NERResult serialization."""
+
 import dataclasses
 
 import pytest
@@ -96,8 +97,14 @@ class TestNERResult:
         result = self._make_result()
         d = result.to_dict()
         assert set(d.keys()) == {
-            "source_text", "compounds", "targets", "diseases",
-            "bioactivities", "assays", "mechanisms", "unclassified",
+            "source_text",
+            "compounds",
+            "targets",
+            "diseases",
+            "bioactivities",
+            "assays",
+            "mechanisms",
+            "unclassified",
         }
         assert d["source_text"] == result.source_text
         assert len(d["compounds"]) == 1
@@ -111,6 +118,7 @@ class TestNERResult:
 
     def test_to_dataframe_requires_pandas(self, monkeypatch):
         import builtins
+
         real_import = builtins.__import__
 
         def mock_import(name, *args, **kwargs):

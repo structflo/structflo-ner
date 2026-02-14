@@ -1,16 +1,18 @@
 """Tests for NERExtractor — mocks lx.extract to avoid real API calls."""
+
 from __future__ import annotations
 
 from unittest.mock import MagicMock
 
 import langextract as lx
+
 from structflo.ner import (
     BIOLOGY,
     CHEMISTRY,
     FULL,
+    ChemicalEntity,
     NERExtractor,
     NERResult,
-    ChemicalEntity,
     TargetEntity,
 )
 

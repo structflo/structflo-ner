@@ -53,6 +53,8 @@ from structflo.ner.profiles import (
     EntityProfile,
 )
 
+__version__ = "0.1.0"
+
 __all__ = [
     # Main class
     "NERExtractor",

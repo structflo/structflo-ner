@@ -1,4 +1,5 @@
 """Typed entity dataclasses for drug discovery NER results."""
+
 from __future__ import annotations
 
 import dataclasses
@@ -124,7 +125,7 @@ class NERResult:
             "unclassified": [dataclasses.asdict(e) for e in self.unclassified],
         }
 
-    def to_dataframe(self) -> "pd.DataFrame":
+    def to_dataframe(self) -> pd.DataFrame:
         """Return all entities as a flat pandas DataFrame.
 
         Requires pandas to be installed: pip install structflo-ner[dataframe]

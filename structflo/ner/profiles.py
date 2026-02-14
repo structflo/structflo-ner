@@ -16,6 +16,7 @@ Users can use the built-in profiles or create their own:
     )
     extractor.extract(text, profile=my_profile)
 """
+
 from __future__ import annotations
 
 import dataclasses
@@ -42,7 +43,7 @@ class EntityProfile:
     prompt: str
     examples: list[lx.data.ExampleData]
 
-    def merge(self, other: "EntityProfile") -> "EntityProfile":
+    def merge(self, other: EntityProfile) -> EntityProfile:
         """Return a new profile combining this profile with another."""
         return EntityProfile(
             name=f"{self.name}+{other.name}",

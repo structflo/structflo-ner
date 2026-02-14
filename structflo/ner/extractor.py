@@ -1,4 +1,5 @@
 """NERExtractor: the main user-facing class for drug discovery NER."""
+
 from __future__ import annotations
 
 import langextract as lx

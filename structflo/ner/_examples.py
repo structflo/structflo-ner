@@ -4,6 +4,7 @@ These examples are representative of real drug discovery literature and are
 designed to give the LLM strong signal about what to extract and at what
 granularity.
 """
+
 from __future__ import annotations
 
 import langextract as lx
@@ -180,7 +181,11 @@ _BIOACTIVITY_EXAMPLE_1 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="assay",
             extraction_text="A549 (human lung adenocarcinoma) cell proliferation assay",
-            attributes={"cell_line": "A549", "organism": "human", "assay_format": "cell proliferation"},
+            attributes={
+                "cell_line": "A549",
+                "organism": "human",
+                "assay_format": "cell proliferation",
+            },
         ),
         lx.data.Extraction(
             extraction_class="bioactivity",
