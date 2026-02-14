@@ -1935,6 +1935,8 @@ dataframe = [
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "pandas", version = "3.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
+
+[package.dev-dependencies]
 dev = [
     { name = "pytest" },
     { name = "pytest-mock" },
@@ -1945,11 +1947,15 @@ dev = [
 requires-dist = [
     { name = "langextract", specifier = ">=1.1.1" },
     { name = "pandas", marker = "extra == 'dataframe'", specifier = ">=1.5" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7" },
-    { name = "pytest-mock", marker = "extra == 'dev'", specifier = ">=3" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
 ]
-provides-extras = ["dataframe", "dev"]
+provides-extras = ["dataframe"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pytest", specifier = ">=7" },
+    { name = "pytest-mock", specifier = ">=3" },
+    { name = "ruff", specifier = ">=0.8" },
+]
 
 [[package]]
 name = "tenacity"
