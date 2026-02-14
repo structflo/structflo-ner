@@ -1,0 +1,27 @@
+[project]
+name = "structflo-ner"
+version = "0.1.0"
+description = "Drug discovery NER wrapper around LangExtract — zero-config entity extraction for chemistry and biology."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+dependencies = [
+    "langextract>=1.1.1",
+]
+
+[project.optional-dependencies]
+dataframe = ["pandas>=1.5"]
+dev = [
+    "pytest>=7",
+    "pytest-mock>=3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["structflo"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
