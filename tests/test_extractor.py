@@ -145,9 +145,7 @@ class TestFilterExtractions:
                 lx.data.Extraction(extraction_class="target", extraction_text="COX-2"),
             ]
         )
-        filtered = NERExtractor._filter_extractions(
-            doc, {"compound_name", "target"}
-        )
+        filtered = NERExtractor._filter_extractions(doc, {"compound_name", "target"})
         assert len(filtered.extractions) == 2
 
     def test_drops_hallucinated_classes(self):
@@ -158,9 +156,7 @@ class TestFilterExtractions:
                 lx.data.Extraction(extraction_class="toxicity", extraction_text="hepatotoxic"),
             ]
         )
-        filtered = NERExtractor._filter_extractions(
-            doc, {"compound_name", "target"}
-        )
+        filtered = NERExtractor._filter_extractions(doc, {"compound_name", "target"})
         assert len(filtered.extractions) == 1
         assert filtered.extractions[0].extraction_text == "Aspirin"
 

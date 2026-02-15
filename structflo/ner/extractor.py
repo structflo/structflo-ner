@@ -146,8 +146,7 @@ class NERExtractor:
                 kept.append(ext)
             else:
                 logger.warning(
-                    "Dropping extraction with unknown class %r (text=%r). "
-                    "Allowed classes: %s",
+                    "Dropping extraction with unknown class %r (text=%r). Allowed classes: %s",
                     ext.extraction_class,
                     ext.extraction_text,
                     ", ".join(sorted(allowed_classes)),
