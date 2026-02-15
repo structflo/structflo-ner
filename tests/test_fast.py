@@ -7,7 +7,10 @@ from pathlib import Path
 
 import pytest
 
-from structflo.ner._entities import (
+pytest.importorskip("rapidfuzz", reason="rapidfuzz required for fast NER tests")
+pytest.importorskip("yaml", reason="PyYAML required for fast NER tests")
+
+from structflo.ner._entities import (  # noqa: E402
     AccessionEntity,
     ChemicalEntity,
     DiseaseEntity,

@@ -5,8 +5,6 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from rapidfuzz import fuzz
-
 from structflo.ner.fast._normalize import expand_variants, normalize
 
 
@@ -180,6 +178,8 @@ class GazetteerMatcher:
 
     def _fuzzy_match(self, text: str, occupied: set[int]) -> list[Match]:
         """Phase 2: Fuzzy matching on unmatched tokens."""
+        from rapidfuzz import fuzz  # noqa: PLC0415
+
         matches: list[Match] = []
 
         for token_match in _TOKEN_RE.finditer(text):
