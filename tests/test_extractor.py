@@ -122,6 +122,54 @@ class TestNERExtractorExtract:
         assert result.source_text == "My source text"
 
 
+class TestBuildPrompt:
+    def test_prompt_includes_entity_class_constraint(self):
+        extractor = NERExtractor()
+        prompt = extractor._build_prompt(CHEMISTRY)
+        assert "ONLY these entity classes" in prompt
+        for cls in CHEMISTRY.entity_classes:
+            assert cls in prompt
+
+    def test_prompt_includes_all_tb_classes(self):
+        extractor = NERExtractor()
+        prompt = extractor._build_prompt(TB)
+        for cls in TB.entity_classes:
+            assert cls in prompt
+
+
+class TestFilterExtractions:
+    def test_keeps_valid_extractions(self):
+        doc = _make_annotated_doc(
+            [
+                lx.data.Extraction(extraction_class="compound_name", extraction_text="Aspirin"),
+                lx.data.Extraction(extraction_class="target", extraction_text="COX-2"),
+            ]
+        )
+        filtered = NERExtractor._filter_extractions(
+            doc, {"compound_name", "target"}
+        )
+        assert len(filtered.extractions) == 2
+
+    def test_drops_hallucinated_classes(self):
+        doc = _make_annotated_doc(
+            [
+                lx.data.Extraction(extraction_class="compound_name", extraction_text="Aspirin"),
+                lx.data.Extraction(extraction_class="enzyme", extraction_text="COX-2"),
+                lx.data.Extraction(extraction_class="toxicity", extraction_text="hepatotoxic"),
+            ]
+        )
+        filtered = NERExtractor._filter_extractions(
+            doc, {"compound_name", "target"}
+        )
+        assert len(filtered.extractions) == 1
+        assert filtered.extractions[0].extraction_text == "Aspirin"
+
+    def test_empty_extractions(self):
+        doc = _make_annotated_doc([])
+        filtered = NERExtractor._filter_extractions(doc, {"compound_name"})
+        assert len(filtered.extractions) == 0
+
+
 class TestBuildExamples:
     def test_extra_examples_appended(self):
         extra = lx.data.ExampleData(text="extra", extractions=[])

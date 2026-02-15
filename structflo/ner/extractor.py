@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import logging
+
 import langextract as lx
 
 from structflo.ner._entities import NERResult
 from structflo.ner._mapping import annotated_doc_to_result
 from structflo.ner.profiles import FULL, EntityProfile
+
+logger = logging.getLogger(__name__)
 
 
 class NERExtractor:
@@ -109,8 +113,54 @@ class NERExtractor:
         return profile.examples + self._extra_examples
 
     def _build_prompt(self, profile: EntityProfile) -> str:
-        """Return the prompt string for the given profile."""
-        return profile.prompt
+        """Return the prompt string for the given profile.
+
+        Appends an explicit schema constraint listing the allowed
+        entity classes.  This is critical for models that don't support
+        structured-output schemas (e.g. Ollama) where
+        ``use_schema_constraints`` has no effect.
+        """
+        classes = ", ".join(profile.entity_classes)
+        constraint = (
+            f"\n\nIMPORTANT — You MUST classify every extraction using "
+            f"ONLY these entity classes: [{classes}]. "
+            f"Do NOT invent new class names. Any extraction_class not in "
+            f"this list is an error."
+        )
+        return profile.prompt + constraint
+
+    @staticmethod
+    def _filter_extractions(
+        doc: lx.data.AnnotatedDocument,
+        allowed_classes: set[str],
+    ) -> lx.data.AnnotatedDocument:
+        """Drop extractions whose class is not in the profile's allowed set.
+
+        Models without schema-constraint support (e.g. Ollama) may invent
+        arbitrary entity classes.  This post-processing step removes those
+        hallucinated classes so they don't pollute the result.
+        """
+        kept: list[lx.data.Extraction] = []
+        for ext in doc.extractions:
+            if ext.extraction_class in allowed_classes:
+                kept.append(ext)
+            else:
+                logger.warning(
+                    "Dropping extraction with unknown class %r (text=%r). "
+                    "Allowed classes: %s",
+                    ext.extraction_class,
+                    ext.extraction_text,
+                    ", ".join(sorted(allowed_classes)),
+                )
+        return lx.data.AnnotatedDocument(
+            text=doc.text,
+            extractions=kept,
+        )
+
+    @property
+    def _is_ollama(self) -> bool:
+        """Return True when routing to an Ollama endpoint."""
+        return self._model_url is not None
 
     def _run_extraction(
         self,
@@ -125,6 +175,13 @@ class NERExtractor:
         kwargs.setdefault("use_schema_constraints", True)
         kwargs.setdefault("show_progress", False)
 
+        # Ollama defaults to num_ctx=2048 which is far too small for
+        # few-shot NER prompts.  Set a sane default so users don't hit
+        # silent truncation.
+        if self._is_ollama:
+            lm_params = kwargs.setdefault("language_model_params", {})
+            lm_params.setdefault("num_ctx", 8192)
+
         result = lx.extract(
             text_or_documents=text,
             prompt_description=prompt,
@@ -136,6 +193,8 @@ class NERExtractor:
         )
 
         # lx.extract returns a list when given a list; we always pass a single string
-        if isinstance(result, list):
-            return result[0]
-        return result
+        doc = result[0] if isinstance(result, list) else result
+
+        # Post-process: drop extractions with hallucinated entity classes
+        allowed = set(profile.entity_classes)
+        return self._filter_extractions(doc, allowed)

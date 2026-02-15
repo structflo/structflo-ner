@@ -607,14 +607,14 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
             attributes={"value": "3.1", "unit": "uM", "assay_type": "MIC"},
         ),
         lx.data.Extraction(
-            extraction_class="bioactivity",
-            extraction_text="CC50 >50 uM",
-            attributes={"value": ">50", "unit": "uM", "assay_type": "CC50"},
-        ),
-        lx.data.Extraction(
             extraction_class="assay",
             extraction_text="HepG2 cells",
             attributes={"cell_line": "HepG2", "assay_format": "cytotoxicity"},
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="CC50 >50 uM",
+            attributes={"value": ">50", "unit": "uM", "assay_type": "CC50"},
         ),
     ],
 )
