@@ -51,6 +51,26 @@ class MechanismEntity(NEREntity):
     """A mechanism of action or binding mode description."""
 
 
+@dataclasses.dataclass(frozen=True)
+class AccessionEntity(NEREntity):
+    """A database accession: Rv locus tag, UniProt ID, or PDB code."""
+
+
+@dataclasses.dataclass(frozen=True)
+class ProductEntity(NEREntity):
+    """A gene product description (e.g., enzyme name, protein function)."""
+
+
+@dataclasses.dataclass(frozen=True)
+class FunctionalCategoryEntity(NEREntity):
+    """A protein functional category (e.g., cell wall, lipid metabolism)."""
+
+
+@dataclasses.dataclass(frozen=True)
+class ScreeningMethodEntity(NEREntity):
+    """A screening approach: fragment, biochemical, DEL, hypomorph, etc."""
+
+
 # Maps extraction_class → typed entity class
 _ENTITY_CLASS_MAP: dict[str, type[NEREntity]] = {
     "compound_name": ChemicalEntity,
@@ -64,6 +84,10 @@ _ENTITY_CLASS_MAP: dict[str, type[NEREntity]] = {
     "bioactivity": BioactivityEntity,
     "assay": AssayEntity,
     "mechanism_of_action": MechanismEntity,
+    "accession_number": AccessionEntity,
+    "product": ProductEntity,
+    "functional_category": FunctionalCategoryEntity,
+    "screening_method": ScreeningMethodEntity,
 }
 
 # Maps typed entity class → NERResult field name
@@ -74,6 +98,10 @@ _ENTITY_FIELD_MAP: dict[type[NEREntity], str] = {
     BioactivityEntity: "bioactivities",
     AssayEntity: "assays",
     MechanismEntity: "mechanisms",
+    AccessionEntity: "accessions",
+    ProductEntity: "products",
+    FunctionalCategoryEntity: "functional_categories",
+    ScreeningMethodEntity: "screening_methods",
 }
 
 
@@ -98,6 +126,10 @@ class NERResult:
     bioactivities: list[BioactivityEntity] = dataclasses.field(default_factory=list)
     assays: list[AssayEntity] = dataclasses.field(default_factory=list)
     mechanisms: list[MechanismEntity] = dataclasses.field(default_factory=list)
+    accessions: list[AccessionEntity] = dataclasses.field(default_factory=list)
+    products: list[ProductEntity] = dataclasses.field(default_factory=list)
+    functional_categories: list[FunctionalCategoryEntity] = dataclasses.field(default_factory=list)
+    screening_methods: list[ScreeningMethodEntity] = dataclasses.field(default_factory=list)
     unclassified: list[NEREntity] = dataclasses.field(default_factory=list)
 
     def all_entities(self) -> list[NEREntity]:
@@ -109,6 +141,10 @@ class NERResult:
             + list(self.bioactivities)
             + list(self.assays)
             + list(self.mechanisms)
+            + list(self.accessions)
+            + list(self.products)
+            + list(self.functional_categories)
+            + list(self.screening_methods)
             + list(self.unclassified)
         )
 
@@ -122,6 +158,10 @@ class NERResult:
             "bioactivities": [dataclasses.asdict(e) for e in self.bioactivities],
             "assays": [dataclasses.asdict(e) for e in self.assays],
             "mechanisms": [dataclasses.asdict(e) for e in self.mechanisms],
+            "accessions": [dataclasses.asdict(e) for e in self.accessions],
+            "products": [dataclasses.asdict(e) for e in self.products],
+            "functional_categories": [dataclasses.asdict(e) for e in self.functional_categories],
+            "screening_methods": [dataclasses.asdict(e) for e in self.screening_methods],
             "unclassified": [dataclasses.asdict(e) for e in self.unclassified],
         }
 

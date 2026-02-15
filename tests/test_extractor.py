@@ -10,6 +10,10 @@ from structflo.ner import (
     BIOLOGY,
     CHEMISTRY,
     FULL,
+    TB,
+    TB_BIOLOGY,
+    TB_CHEMISTRY,
+    AccessionEntity,
     ChemicalEntity,
     NERExtractor,
     NERResult,
@@ -145,3 +149,62 @@ class TestEntityProfileMerge:
     def test_merge_combines_examples(self):
         merged = CHEMISTRY.merge(BIOLOGY)
         assert len(merged.examples) == len(CHEMISTRY.examples) + len(BIOLOGY.examples)
+
+
+class TestTBProfile:
+    def test_tb_has_all_entity_classes(self):
+        assert "compound_name" in TB.entity_classes
+        assert "target" in TB.entity_classes
+        assert "disease" in TB.entity_classes
+        assert "bioactivity" in TB.entity_classes
+        assert "assay" in TB.entity_classes
+        assert "mechanism_of_action" in TB.entity_classes
+        assert "accession_number" in TB.entity_classes
+        assert "product" in TB.entity_classes
+        assert "functional_category" in TB.entity_classes
+        assert "screening_method" in TB.entity_classes
+
+    def test_tb_chemistry_is_subset(self):
+        for cls in TB_CHEMISTRY.entity_classes:
+            assert cls in TB.entity_classes
+
+    def test_tb_biology_is_subset(self):
+        for cls in TB_BIOLOGY.entity_classes:
+            assert cls in TB.entity_classes
+
+    def test_tb_examples_count(self):
+        assert len(TB.examples) == 4
+        assert len(TB_CHEMISTRY.examples) == 2
+        assert len(TB_BIOLOGY.examples) == 2
+
+    def test_tb_profile_extract(self):
+        extractor = NERExtractor(profile=TB)
+        doc = _make_annotated_doc(
+            [
+                lx.data.Extraction(
+                    extraction_class="compound_name",
+                    extraction_text="Bedaquiline",
+                ),
+                lx.data.Extraction(
+                    extraction_class="target",
+                    extraction_text="AtpE",
+                    attributes={"gene_name": "Rv1305"},
+                ),
+                lx.data.Extraction(
+                    extraction_class="accession_number",
+                    extraction_text="Rv1305",
+                ),
+                lx.data.Extraction(
+                    extraction_class="disease",
+                    extraction_text="MDR-TB",
+                ),
+            ]
+        )
+        extractor._run_extraction = MagicMock(return_value=doc)
+        result = extractor.extract("Bedaquiline targets AtpE (Rv1305) in MDR-TB.")
+        assert len(result.compounds) == 1
+        assert len(result.targets) == 1
+        assert len(result.accessions) == 1
+        assert isinstance(result.accessions[0], AccessionEntity)
+        assert result.accessions[0].text == "Rv1305"
+        assert len(result.diseases) == 1

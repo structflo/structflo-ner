@@ -5,13 +5,17 @@ import dataclasses
 import pytest
 
 from structflo.ner._entities import (
+    AccessionEntity,
     AssayEntity,
     BioactivityEntity,
     ChemicalEntity,
     DiseaseEntity,
+    FunctionalCategoryEntity,
     MechanismEntity,
     NEREntity,
     NERResult,
+    ProductEntity,
+    ScreeningMethodEntity,
     TargetEntity,
     entity_class_for,
     field_name_for,
@@ -36,6 +40,12 @@ class TestEntityClassFor:
         assert entity_class_for("assay") is AssayEntity
         assert entity_class_for("mechanism_of_action") is MechanismEntity
 
+    def test_known_tb_classes(self):
+        assert entity_class_for("accession_number") is AccessionEntity
+        assert entity_class_for("product") is ProductEntity
+        assert entity_class_for("functional_category") is FunctionalCategoryEntity
+        assert entity_class_for("screening_method") is ScreeningMethodEntity
+
     def test_unknown_class_falls_back_to_base(self):
         assert entity_class_for("unknown_type") is NEREntity
 
@@ -48,6 +58,10 @@ class TestFieldNameFor:
         assert field_name_for(BioactivityEntity) == "bioactivities"
         assert field_name_for(AssayEntity) == "assays"
         assert field_name_for(MechanismEntity) == "mechanisms"
+        assert field_name_for(AccessionEntity) == "accessions"
+        assert field_name_for(ProductEntity) == "products"
+        assert field_name_for(FunctionalCategoryEntity) == "functional_categories"
+        assert field_name_for(ScreeningMethodEntity) == "screening_methods"
 
     def test_unknown_falls_back_to_unclassified(self):
         assert field_name_for(NEREntity) == "unclassified"
@@ -104,6 +118,10 @@ class TestNERResult:
             "bioactivities",
             "assays",
             "mechanisms",
+            "accessions",
+            "products",
+            "functional_categories",
+            "screening_methods",
             "unclassified",
         }
         assert d["source_text"] == result.source_text

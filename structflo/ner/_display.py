@@ -22,6 +22,10 @@ _COLORS: dict[str, dict[str, str]] = {
     "BioactivityEntity": {"bg": "#fef3c7", "border": "#f59e0b", "label": "Bioactivity"},
     "AssayEntity": {"bg": "#e0e7ff", "border": "#6366f1", "label": "Assay"},
     "MechanismEntity": {"bg": "#f3e8ff", "border": "#a855f7", "label": "Mechanism"},
+    "AccessionEntity": {"bg": "#ccfbf1", "border": "#14b8a6", "label": "Accession"},
+    "ProductEntity": {"bg": "#ffedd5", "border": "#f97316", "label": "Product"},
+    "FunctionalCategoryEntity": {"bg": "#ffe4e6", "border": "#f43f5e", "label": "Function"},
+    "ScreeningMethodEntity": {"bg": "#d1fae5", "border": "#10b981", "label": "Screening"},
     "NEREntity": {"bg": "#f1f5f9", "border": "#94a3b8", "label": "Other"},
 }
 

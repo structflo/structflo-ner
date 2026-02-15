@@ -103,3 +103,51 @@ FULL: EntityProfile = EntityProfile(
     prompt=_prompts.FULL_PROMPT,
     examples=_examples.FULL_EXAMPLES,
 )
+
+# ---------------------------------------------------------------------------
+# Tuberculosis early drug discovery profiles
+# ---------------------------------------------------------------------------
+
+TB: EntityProfile = EntityProfile(
+    name="tb",
+    entity_classes=[
+        "compound_name",
+        "smiles",
+        "cas_number",
+        "molecular_formula",
+        "target",
+        "gene_name",
+        "protein_name",
+        "disease",
+        "bioactivity",
+        "assay",
+        "mechanism_of_action",
+        "accession_number",
+        "product",
+        "functional_category",
+        "screening_method",
+    ],
+    prompt=_prompts.TB_PROMPT,
+    examples=_examples.TB_EXAMPLES,
+)
+
+TB_CHEMISTRY: EntityProfile = EntityProfile(
+    name="tb_chemistry",
+    entity_classes=["compound_name", "smiles", "cas_number", "molecular_formula"],
+    prompt=_prompts.TB_CHEMISTRY_PROMPT,
+    examples=_examples.TB_CHEMISTRY_EXAMPLES,
+)
+
+TB_BIOLOGY: EntityProfile = EntityProfile(
+    name="tb_biology",
+    entity_classes=[
+        "target",
+        "gene_name",
+        "protein_name",
+        "accession_number",
+        "product",
+        "functional_category",
+    ],
+    prompt=_prompts.TB_BIOLOGY_PROMPT,
+    examples=_examples.TB_BIOLOGY_EXAMPLES,
+)

@@ -35,13 +35,17 @@ Custom profile::
 
 from structflo.ner._display import display, render_html
 from structflo.ner._entities import (
+    AccessionEntity,
     AssayEntity,
     BioactivityEntity,
     ChemicalEntity,
     DiseaseEntity,
+    FunctionalCategoryEntity,
     MechanismEntity,
     NEREntity,
     NERResult,
+    ProductEntity,
+    ScreeningMethodEntity,
     TargetEntity,
 )
 from structflo.ner.extractor import NERExtractor
@@ -51,6 +55,9 @@ from structflo.ner.profiles import (
     CHEMISTRY,
     DISEASE,
     FULL,
+    TB,
+    TB_BIOLOGY,
+    TB_CHEMISTRY,
     EntityProfile,
 )
 
@@ -66,6 +73,9 @@ __all__ = [
     "BIOLOGY",
     "BIOACTIVITY",
     "DISEASE",
+    "TB",
+    "TB_CHEMISTRY",
+    "TB_BIOLOGY",
     # Result types
     "NERResult",
     "NEREntity",
@@ -75,6 +85,10 @@ __all__ = [
     "BioactivityEntity",
     "AssayEntity",
     "MechanismEntity",
+    "AccessionEntity",
+    "ProductEntity",
+    "FunctionalCategoryEntity",
+    "ScreeningMethodEntity",
     # Visualization
     "display",
     "render_html",

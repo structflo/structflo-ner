@@ -359,3 +359,390 @@ FULL_EXAMPLES: list[lx.data.ExampleData] = (
     + MECHANISM_EXAMPLES
     + [_FULL_EXAMPLE_1]
 )
+
+# ---------------------------------------------------------------------------
+# Tuberculosis early drug discovery examples
+# ---------------------------------------------------------------------------
+
+_TB_EXAMPLE_1 = lx.data.ExampleData(
+    text=(
+        "Bedaquiline (TMC207) targets the c subunit of mycobacterial ATP synthase "
+        "(AtpE, Rv1305, UniProt P9WPS1), a proton pump classified under intermediary "
+        "metabolism and respiration. The gene product is ATP synthase subunit c. "
+        "In a biochemical screening campaign, bedaquiline showed a MIC of 0.03 ug/mL "
+        "against M. tuberculosis H37Rv in a Microplate Alamar Blue Assay (MABA) and "
+        "demonstrated bactericidal activity in a mouse chronic infection model. "
+        "Bedaquiline is approved for multidrug-resistant tuberculosis (MDR-TB)."
+    ),
+    extractions=[
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="Bedaquiline",
+            attributes={"synonyms": "TMC207"},
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="TMC207",
+        ),
+        lx.data.Extraction(
+            extraction_class="target",
+            extraction_text="ATP synthase",
+            attributes={"protein_family": "ATP synthase", "organism": "M. tuberculosis"},
+        ),
+        lx.data.Extraction(
+            extraction_class="target",
+            extraction_text="AtpE",
+            attributes={"gene_name": "Rv1305", "protein_family": "ATP synthase"},
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="Rv1305",
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="P9WPS1",
+            attributes={"database": "UniProt"},
+        ),
+        lx.data.Extraction(
+            extraction_class="functional_category",
+            extraction_text="intermediary metabolism and respiration",
+        ),
+        lx.data.Extraction(
+            extraction_class="product",
+            extraction_text="ATP synthase subunit c",
+        ),
+        lx.data.Extraction(
+            extraction_class="screening_method",
+            extraction_text="biochemical screening",
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="MIC of 0.03 ug/mL",
+            attributes={"value": "0.03", "unit": "ug/mL", "assay_type": "MIC", "strain": "H37Rv"},
+        ),
+        lx.data.Extraction(
+            extraction_class="assay",
+            extraction_text="Microplate Alamar Blue Assay",
+            attributes={"abbreviation": "MABA", "assay_format": "whole-cell", "strain": "H37Rv"},
+        ),
+        lx.data.Extraction(
+            extraction_class="assay",
+            extraction_text="mouse chronic infection model",
+            attributes={"organism": "mouse", "assay_format": "in vivo"},
+        ),
+        lx.data.Extraction(
+            extraction_class="disease",
+            extraction_text="multidrug-resistant tuberculosis",
+            attributes={"abbreviation": "MDR-TB", "therapeutic_area": "infectious disease"},
+        ),
+        lx.data.Extraction(
+            extraction_class="disease",
+            extraction_text="MDR-TB",
+            attributes={"therapeutic_area": "infectious disease"},
+        ),
+    ],
+)
+
+_TB_EXAMPLE_2 = lx.data.ExampleData(
+    text=(
+        "BTZ043, a benzothiazinone identified through whole-cell phenotypic screening, "
+        "irreversibly inhibits DprE1 (Rv3790), the decaprenylphosphoryl-beta-D-ribose "
+        "2-epimerase involved in cell wall and cell processes, via covalent modification "
+        "of the active-site cysteine Cys387. BTZ043 exhibited a MIC of 1 ng/mL against "
+        "M. tuberculosis H37Rv and a MIC of 4 ng/mL against the Erdman strain. "
+        "Its optimized analog PBTZ169 (Macozinone) showed a MIC of 0.6 ng/mL. "
+        "Both compounds disrupt cell wall arabinan biosynthesis and are active against "
+        "extensively drug-resistant TB (XDR-TB)."
+    ),
+    extractions=[
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="BTZ043",
+        ),
+        lx.data.Extraction(
+            extraction_class="screening_method",
+            extraction_text="whole-cell phenotypic screening",
+        ),
+        lx.data.Extraction(
+            extraction_class="target",
+            extraction_text="DprE1",
+            attributes={
+                "gene_name": "Rv3790",
+                "protein_family": "epimerase",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="Rv3790",
+        ),
+        lx.data.Extraction(
+            extraction_class="product",
+            extraction_text="decaprenylphosphoryl-beta-D-ribose 2-epimerase",
+        ),
+        lx.data.Extraction(
+            extraction_class="functional_category",
+            extraction_text="cell wall and cell processes",
+        ),
+        lx.data.Extraction(
+            extraction_class="mechanism_of_action",
+            extraction_text="covalent modification of the active-site cysteine Cys387",
+            attributes={"binding_mode": "covalent", "selectivity": "irreversible"},
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="MIC of 1 ng/mL",
+            attributes={"value": "1", "unit": "ng/mL", "assay_type": "MIC", "strain": "H37Rv"},
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="MIC of 4 ng/mL",
+            attributes={"value": "4", "unit": "ng/mL", "assay_type": "MIC", "strain": "Erdman"},
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="PBTZ169",
+            attributes={"synonyms": "Macozinone"},
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="Macozinone",
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="MIC of 0.6 ng/mL",
+            attributes={"value": "0.6", "unit": "ng/mL", "assay_type": "MIC"},
+        ),
+        lx.data.Extraction(
+            extraction_class="mechanism_of_action",
+            extraction_text="cell wall arabinan biosynthesis",
+            attributes={"binding_mode": "cell wall biosynthesis inhibition"},
+        ),
+        lx.data.Extraction(
+            extraction_class="disease",
+            extraction_text="extensively drug-resistant TB",
+            attributes={"abbreviation": "XDR-TB", "therapeutic_area": "infectious disease"},
+        ),
+        lx.data.Extraction(
+            extraction_class="disease",
+            extraction_text="XDR-TB",
+            attributes={"therapeutic_area": "infectious disease"},
+        ),
+    ],
+)
+
+_TB_EXAMPLE_3 = lx.data.ExampleData(
+    text=(
+        "Compound 14a inhibited InhA (Rv1484), the NADH-dependent enoyl-ACP reductase "
+        "involved in lipid metabolism, with an IC50 of 85 nM in a biochemical assay. "
+        "Whole-cell activity was assessed using the REMA against M. tuberculosis H37Rv, "
+        "yielding a MIC90 of 0.5 uM. The compound also showed intracellular activity "
+        "in a THP-1 macrophage infection assay with an EC50 of 1.2 uM. "
+        "In a Low Oxygen Recovery Assay (LORA), it retained activity against non-replicating "
+        "bacilli with a MIC of 3.1 uM. No cytotoxicity was observed in HepG2 cells "
+        "up to 50 uM (CC50 >50 uM)."
+    ),
+    extractions=[
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="Compound 14a",
+        ),
+        lx.data.Extraction(
+            extraction_class="target",
+            extraction_text="InhA",
+            attributes={"gene_name": "Rv1484", "protein_family": "reductase"},
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="Rv1484",
+        ),
+        lx.data.Extraction(
+            extraction_class="product",
+            extraction_text="NADH-dependent enoyl-ACP reductase",
+        ),
+        lx.data.Extraction(
+            extraction_class="functional_category",
+            extraction_text="lipid metabolism",
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="IC50 of 85 nM",
+            attributes={"value": "85", "unit": "nM", "assay_type": "IC50"},
+        ),
+        lx.data.Extraction(
+            extraction_class="screening_method",
+            extraction_text="biochemical assay",
+        ),
+        lx.data.Extraction(
+            extraction_class="assay",
+            extraction_text="REMA",
+            attributes={
+                "full_name": "Resazurin Microtiter Assay",
+                "assay_format": "whole-cell",
+                "strain": "H37Rv",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="MIC90 of 0.5 uM",
+            attributes={"value": "0.5", "unit": "uM", "assay_type": "MIC90", "strain": "H37Rv"},
+        ),
+        lx.data.Extraction(
+            extraction_class="assay",
+            extraction_text="THP-1 macrophage infection assay",
+            attributes={"cell_line": "THP-1", "assay_format": "intracellular"},
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="EC50 of 1.2 uM",
+            attributes={"value": "1.2", "unit": "uM", "assay_type": "EC50"},
+        ),
+        lx.data.Extraction(
+            extraction_class="assay",
+            extraction_text="Low Oxygen Recovery Assay",
+            attributes={"abbreviation": "LORA", "assay_format": "non-replicating"},
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="MIC of 3.1 uM",
+            attributes={"value": "3.1", "unit": "uM", "assay_type": "MIC"},
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="CC50 >50 uM",
+            attributes={"value": ">50", "unit": "uM", "assay_type": "CC50"},
+        ),
+        lx.data.Extraction(
+            extraction_class="assay",
+            extraction_text="HepG2 cells",
+            attributes={"cell_line": "HepG2", "assay_format": "cytotoxicity"},
+        ),
+    ],
+)
+
+_TB_EXAMPLE_4 = lx.data.ExampleData(
+    text=(
+        "Using fragment screening and affinity-based methods, Q203 (Telacebec) was "
+        "identified as an inhibitor of the cytochrome bc1 complex subunit QcrB (Rv2196), "
+        "an oxidoreductase classified under intermediary metabolism and respiration. "
+        "SQ109 disrupts trehalose monomycolate transport by inhibiting MmpL3 (Rv0206c), "
+        "a membrane transporter involved in cell wall and cell processes. "
+        "Resistance to isoniazid frequently arises through mutations in katG (Rv1908c) "
+        "or the inhA promoter region. Rifampicin resistance maps to rpoB (Rv0667). "
+        "These compounds are under evaluation for active pulmonary TB and latent TB "
+        "infection (LTBI)."
+    ),
+    extractions=[
+        lx.data.Extraction(
+            extraction_class="screening_method",
+            extraction_text="fragment screening",
+        ),
+        lx.data.Extraction(
+            extraction_class="screening_method",
+            extraction_text="affinity-based methods",
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="Q203",
+            attributes={"synonyms": "Telacebec"},
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="Telacebec",
+        ),
+        lx.data.Extraction(
+            extraction_class="target",
+            extraction_text="QcrB",
+            attributes={"gene_name": "Rv2196", "protein_family": "oxidoreductase"},
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="Rv2196",
+        ),
+        lx.data.Extraction(
+            extraction_class="functional_category",
+            extraction_text="intermediary metabolism and respiration",
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="SQ109",
+        ),
+        lx.data.Extraction(
+            extraction_class="mechanism_of_action",
+            extraction_text="trehalose monomycolate transport",
+            attributes={"binding_mode": "transport inhibition"},
+        ),
+        lx.data.Extraction(
+            extraction_class="target",
+            extraction_text="MmpL3",
+            attributes={"gene_name": "Rv0206c", "protein_family": "transporter"},
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="Rv0206c",
+        ),
+        lx.data.Extraction(
+            extraction_class="functional_category",
+            extraction_text="cell wall and cell processes",
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="isoniazid",
+        ),
+        lx.data.Extraction(
+            extraction_class="gene_name",
+            extraction_text="katG",
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="Rv1908c",
+        ),
+        lx.data.Extraction(
+            extraction_class="gene_name",
+            extraction_text="inhA",
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="Rifampicin",
+        ),
+        lx.data.Extraction(
+            extraction_class="gene_name",
+            extraction_text="rpoB",
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="Rv0667",
+        ),
+        lx.data.Extraction(
+            extraction_class="disease",
+            extraction_text="pulmonary TB",
+            attributes={"therapeutic_area": "infectious disease"},
+        ),
+        lx.data.Extraction(
+            extraction_class="disease",
+            extraction_text="latent TB infection",
+            attributes={"abbreviation": "LTBI", "therapeutic_area": "infectious disease"},
+        ),
+        lx.data.Extraction(
+            extraction_class="disease",
+            extraction_text="LTBI",
+            attributes={"therapeutic_area": "infectious disease"},
+        ),
+    ],
+)
+
+TB_EXAMPLES: list[lx.data.ExampleData] = [
+    _TB_EXAMPLE_1,
+    _TB_EXAMPLE_2,
+    _TB_EXAMPLE_3,
+    _TB_EXAMPLE_4,
+]
+
+TB_CHEMISTRY_EXAMPLES: list[lx.data.ExampleData] = [
+    _TB_EXAMPLE_1,
+    _TB_EXAMPLE_2,
+]
+
+TB_BIOLOGY_EXAMPLES: list[lx.data.ExampleData] = [
+    _TB_EXAMPLE_2,
+    _TB_EXAMPLE_4,
+]

@@ -57,6 +57,10 @@ def annotated_doc_to_result(
         "bioactivities": [],
         "assays": [],
         "mechanisms": [],
+        "accessions": [],
+        "products": [],
+        "functional_categories": [],
+        "screening_methods": [],
         "unclassified": [],
     }
 
