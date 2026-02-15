@@ -122,7 +122,7 @@ class NERExtractor:
         prompt = self._build_prompt(profile)
 
         kwargs: dict = dict(self._langextract_kwargs)
-        kwargs.setdefault("use_schema_constraints", True)
+        kwargs.setdefault("use_schema_constraints", False)
         kwargs.setdefault("show_progress", False)
 
         result = lx.extract(

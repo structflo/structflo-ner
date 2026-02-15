@@ -87,6 +87,30 @@ my_profile = EntityProfile(
 result = extractor.extract(text, profile=my_profile)
 ```
 
+## Visualization
+
+Render results as color-coded, interactive HTML directly in Jupyter notebooks:
+
+```python
+# Auto-renders when result is the last expression in a cell
+result
+
+# Or call explicitly
+result.display()
+```
+
+Each entity type gets a distinct color with a superscript label. Hover any
+highlight to see its type and attributes. Click legend items to toggle
+categories on or off.
+
+To get the raw HTML string (useful outside Jupyter):
+
+```python
+from structflo.ner import render_html
+
+html_str = render_html(result)
+```
+
 ## Working with results
 
 ```python

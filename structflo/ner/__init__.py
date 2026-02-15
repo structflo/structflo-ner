@@ -33,6 +33,7 @@ Custom profile::
     result = extractor.extract(text, profile=my_profile)
 """
 
+from structflo.ner._display import display, render_html
 from structflo.ner._entities import (
     AssayEntity,
     BioactivityEntity,
@@ -53,7 +54,7 @@ from structflo.ner.profiles import (
     EntityProfile,
 )
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     # Main class
@@ -74,4 +75,7 @@ __all__ = [
     "BioactivityEntity",
     "AssayEntity",
     "MechanismEntity",
+    # Visualization
+    "display",
+    "render_html",
 ]

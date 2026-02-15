@@ -125,6 +125,18 @@ class NERResult:
             "unclassified": [dataclasses.asdict(e) for e in self.unclassified],
         }
 
+    def display(self) -> None:
+        """Render the result as interactive HTML in a Jupyter notebook."""
+        from structflo.ner._display import display as _display  # noqa: PLC0415
+
+        _display(self)
+
+    def _repr_html_(self) -> str:
+        """Auto-render as HTML when displayed in Jupyter."""
+        from structflo.ner._display import render_html  # noqa: PLC0415
+
+        return render_html(self)
+
     def to_dataframe(self) -> pd.DataFrame:
         """Return all entities as a flat pandas DataFrame.
 
