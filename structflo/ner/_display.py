@@ -103,7 +103,7 @@ def render_html(result: NERResult) -> str:
             color = _color_for(type(ent).__name__)
             attrs = ", ".join(f"{k}={v}" for k, v in ent.attributes.items()) or "—"
             rows.append(
-                f"<tr data-category=\"{type(ent).__name__}\">"
+                f'<tr data-category="{type(ent).__name__}">'
                 f'<td style="padding:4px 8px"><span style="display:inline-block;'
                 f"width:10px;height:10px;border-radius:50%;background:{color['border']};"
                 f'margin-right:6px"></span>{html.escape(ent.text)}</td>'
@@ -121,9 +121,7 @@ def render_html(result: NERResult) -> str:
             '<th style="text-align:left;padding:4px 8px">Text</th>'
             '<th style="text-align:left;padding:4px 8px">Type</th>'
             '<th style="text-align:left;padding:4px 8px">Attributes</th>'
-            "</tr></thead><tbody>"
-            + "".join(rows)
-            + "</tbody></table></div>"
+            "</tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>"
         )
 
     # Legend
@@ -139,7 +137,7 @@ def render_html(result: NERResult) -> str:
             f"background:{color['bg']};cursor:pointer;font-size:0.8em;font-weight:500;"
             f'font-family:inherit">'
             f'<span style="width:8px;height:8px;border-radius:50%;'
-            f"background:{color['border']}\"></span>"
+            f'background:{color["border"]}"></span>'
             f"{html.escape(color['label'])}</button>"
         )
     legend_html = (
@@ -154,10 +152,7 @@ def render_html(result: NERResult) -> str:
         label = _color_for(type(ent).__name__)["label"]
         counts[label] = counts.get(label, 0) + 1
     count_parts = " · ".join(f"<b>{v}</b> {k}" for k, v in counts.items())
-    summary = (
-        f'<div style="font-size:0.8em;color:#64748b;margin-bottom:10px">'
-        f"{count_parts}</div>"
-    )
+    summary = f'<div style="font-size:0.8em;color:#64748b;margin-bottom:10px">{count_parts}</div>'
 
     # JS for toggling entity categories
     script = (
