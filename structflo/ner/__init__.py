@@ -49,6 +49,12 @@ from structflo.ner._entities import (
     TargetEntity,
 )
 from structflo.ner.extractor import NERExtractor
+
+try:
+    from structflo.ner.fast import FastNERExtractor
+except ImportError:  # rapidfuzz / PyYAML not installed
+    FastNERExtractor = None  # type: ignore[assignment,misc]
+
 from structflo.ner.profiles import (
     BIOACTIVITY,
     BIOLOGY,
@@ -61,11 +67,12 @@ from structflo.ner.profiles import (
     EntityProfile,
 )
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 __all__ = [
-    # Main class
+    # Main classes
     "NERExtractor",
+    "FastNERExtractor",
     # Profile system
     "EntityProfile",
     "FULL",
