@@ -30,7 +30,7 @@
 
 ---
 
-**structflo.ner** is a lightweight NER library specialized for pharmaceutical and biological sciences. It uses [LangExtract](https://github.com/langextract/langextract) and fuzzy based tools to deliver **zero-configuration** entity extraction.
+**structflo.ner** is a lightweight NER library specialized for pharmaceutical and biological sciences. It uses [LangExtract](https://github.com/google/langextract) and fuzzy based tools to deliver **zero-configuration** entity extraction.
 
 It ships with two extraction engines:
 
