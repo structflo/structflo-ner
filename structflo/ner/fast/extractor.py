@@ -146,6 +146,7 @@ def _matches_to_result(matches: list[Match], source_text: str) -> NERResult:
         "products": [],
         "functional_categories": [],
         "screening_methods": [],
+        "strains": [],
         "unclassified": [],
     }
 
