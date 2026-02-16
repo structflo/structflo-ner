@@ -27,5 +27,12 @@ jobs:
       - name: Format
         run: uv run ruff format --check structflo/ tests/
 
-      - name: Test
-        run: uv run pytest -q
+      - name: Test with coverage
+        run: uv run pytest -q --cov=structflo --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
