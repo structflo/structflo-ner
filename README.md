@@ -1,15 +1,10 @@
-<p align="center">
-  <img src="https://avatars.githubusercontent.com/u/250372945?s=200&v=4" alt="structflo.ner logo" width="120">
-</p>
 
 <h1 align="center">structflo.ner</h1>
-
 <p align="center">
-  Zero-config Named Entity Recognition for drug discovery, chemistry, and biological sciences.
+  <img src="./images/struct-flo-ner.png" alt="structflo.ner logo" width="600">
 </p>
 
 <p align="center">
-  <a href="https://pypi.org/project/structflo-ner/"><img src="https://img.shields.io/pypi/pyversions/structflo-ner.svg" alt="Python Versions"></a>
 <a href="https://pepy.tech/projects/structflo-ner"><img src="https://static.pepy.tech/personalized-badge/structflo-ner?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads" alt="PyPI Downloads"></a>
   <a href="https://github.com/structflo/structflo-ner/actions"><img src="https://img.shields.io/github/actions/workflow/status/structflo/structflo-ner/ci.yml?label=tests" alt="Tests"></a>
   <a href="https://codecov.io/gh/structflo/structflo-ner"><img src="https://codecov.io/gh/structflo/structflo-ner/branch/main/graph/badge.svg" alt="Coverage"></a>
@@ -17,6 +12,12 @@
   <a href="https://www.linkedin.com/in/sidxz/"><img src="https://img.shields.io/badge/LinkedIn-blue?logo=linkedin&logoColor=white" alt="LinkedIn"></a>
   <a href="https://github.com/sidxz/"><img src="https://img.shields.io/badge/GitHub-black?logo=github&logoColor=white" alt="GitHub"></a>
 </p>
+
+<p align="center">
+  Zero-config Named Entity Recognition for drug discovery, chemistry, and biological sciences.
+</p>
+
+
 
 <p align="center">
   <a href="#installation">Installation</a> &bull;
