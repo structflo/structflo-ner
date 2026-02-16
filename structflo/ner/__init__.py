@@ -46,15 +46,11 @@ from structflo.ner._entities import (
     NERResult,
     ProductEntity,
     ScreeningMethodEntity,
+    StrainEntity,
     TargetEntity,
 )
 from structflo.ner.extractor import NERExtractor
-
-try:
-    from structflo.ner.fast import FastNERExtractor
-except ImportError:  # rapidfuzz / PyYAML not installed
-    FastNERExtractor = None  # type: ignore[assignment,misc]
-
+from structflo.ner.fast import FastNERExtractor
 from structflo.ner.profiles import (
     BIOACTIVITY,
     BIOLOGY,
@@ -67,7 +63,7 @@ from structflo.ner.profiles import (
     EntityProfile,
 )
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 
 __all__ = [
     # Main classes
@@ -96,6 +92,7 @@ __all__ = [
     "ProductEntity",
     "FunctionalCategoryEntity",
     "ScreeningMethodEntity",
+    "StrainEntity",
     # Visualization
     "display",
     "render_html",

@@ -2018,16 +2018,14 @@ name = "structflo-ner"
 source = { editable = "." }
 dependencies = [
     { name = "langextract" },
+    { name = "pyyaml" },
+    { name = "rapidfuzz" },
 ]
 
 [package.optional-dependencies]
 dataframe = [
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "pandas", version = "3.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-]
-fast = [
-    { name = "pyyaml" },
-    { name = "rapidfuzz" },
 ]
 
 [package.dev-dependencies]
@@ -2041,10 +2039,10 @@ dev = [
 requires-dist = [
     { name = "langextract", specifier = ">=1.1.1" },
     { name = "pandas", marker = "extra == 'dataframe'", specifier = ">=1.5" },
-    { name = "pyyaml", marker = "extra == 'fast'", specifier = ">=6.0" },
-    { name = "rapidfuzz", marker = "extra == 'fast'", specifier = ">=3.0" },
+    { name = "pyyaml", specifier = ">=6.0" },
+    { name = "rapidfuzz", specifier = ">=3.0" },
 ]
-provides-extras = ["dataframe", "fast"]
+provides-extras = ["dataframe"]
 
 [package.metadata.requires-dev]
 dev = [

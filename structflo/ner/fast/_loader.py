@@ -6,6 +6,8 @@ import logging
 import re
 from pathlib import Path
 
+import yaml
+
 from structflo.ner._entities import _ENTITY_CLASS_MAP
 
 logger = logging.getLogger(__name__)
@@ -39,8 +41,6 @@ def load_gazetteer(path: Path) -> tuple[str, list[str]]:
         Tuple of (entity_type, list_of_terms) where entity_type is derived
         from the filename stem.
     """
-    import yaml  # noqa: PLC0415
-
     entity_type = path.stem
     with open(path) as f:
         terms = yaml.safe_load(f)

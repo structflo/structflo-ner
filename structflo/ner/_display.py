@@ -26,6 +26,7 @@ _COLORS: dict[str, dict[str, str]] = {
     "ProductEntity": {"bg": "#ffedd5", "border": "#f97316", "label": "Product"},
     "FunctionalCategoryEntity": {"bg": "#ffe4e6", "border": "#f43f5e", "label": "Function"},
     "ScreeningMethodEntity": {"bg": "#d1fae5", "border": "#10b981", "label": "Screening"},
+    "StrainEntity": {"bg": "#fbcfe8", "border": "#db2777", "label": "Strain"},
     "NEREntity": {"bg": "#f1f5f9", "border": "#94a3b8", "label": "Other"},
 }
 

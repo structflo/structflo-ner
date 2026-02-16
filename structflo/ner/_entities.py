@@ -71,6 +71,11 @@ class ScreeningMethodEntity(NEREntity):
     """A screening approach: fragment, biochemical, DEL, hypomorph, etc."""
 
 
+@dataclasses.dataclass(frozen=True)
+class StrainEntity(NEREntity):
+    """A bacterial or organism strain: species designation, strain name, or identifier."""
+
+
 # Maps extraction_class → typed entity class
 _ENTITY_CLASS_MAP: dict[str, type[NEREntity]] = {
     "compound_name": ChemicalEntity,
@@ -88,6 +93,7 @@ _ENTITY_CLASS_MAP: dict[str, type[NEREntity]] = {
     "product": ProductEntity,
     "functional_category": FunctionalCategoryEntity,
     "screening_method": ScreeningMethodEntity,
+    "strain": StrainEntity,
 }
 
 # Maps typed entity class → NERResult field name
@@ -102,6 +108,7 @@ _ENTITY_FIELD_MAP: dict[type[NEREntity], str] = {
     ProductEntity: "products",
     FunctionalCategoryEntity: "functional_categories",
     ScreeningMethodEntity: "screening_methods",
+    StrainEntity: "strains",
 }
 
 
@@ -130,6 +137,7 @@ class NERResult:
     products: list[ProductEntity] = dataclasses.field(default_factory=list)
     functional_categories: list[FunctionalCategoryEntity] = dataclasses.field(default_factory=list)
     screening_methods: list[ScreeningMethodEntity] = dataclasses.field(default_factory=list)
+    strains: list[StrainEntity] = dataclasses.field(default_factory=list)
     unclassified: list[NEREntity] = dataclasses.field(default_factory=list)
 
     def all_entities(self) -> list[NEREntity]:
@@ -145,6 +153,7 @@ class NERResult:
             + list(self.products)
             + list(self.functional_categories)
             + list(self.screening_methods)
+            + list(self.strains)
             + list(self.unclassified)
         )
 
@@ -162,6 +171,7 @@ class NERResult:
             "products": [dataclasses.asdict(e) for e in self.products],
             "functional_categories": [dataclasses.asdict(e) for e in self.functional_categories],
             "screening_methods": [dataclasses.asdict(e) for e in self.screening_methods],
+            "strains": [dataclasses.asdict(e) for e in self.strains],
             "unclassified": [dataclasses.asdict(e) for e in self.unclassified],
         }
 

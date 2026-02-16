@@ -1,27 +1,46 @@
-- cell wall and cell processes
-- lipid metabolism
-- intermediary metabolism and respiration
-- information pathways
-- regulatory proteins
-- virulence, detoxification, adaptation
-- PE/PPE
-- conserved hypotheticals
-- insertion sequences and phages
-- stable RNAs
-- cell wall biosynthesis
-- mycolic acid biosynthesis
-- fatty acid biosynthesis
-- peptidoglycan biosynthesis
-- arabinogalactan biosynthesis
-- energy metabolism
-- amino acid metabolism
-- nucleotide metabolism
-- cofactor biosynthesis
-- lipid transport
-- iron acquisition
+---
 - DNA replication
+- PE/PPE
+- amino acid metabolism
+- arabinogalactan biosynthesis
+- cell wall and cell processes
+- cell wall and cell processes, conserved hypotheticals
+- cell wall and cell processes, information pathways
+- cell wall and cell processes, intermediary metabolism and respiration
+- cell wall and cell processes, lipid metabolism
+- cell wall biosynthesis
+- cofactor biosynthesis
+- conserved hypotheticals
+- conserved hypotheticals, cell wall and cell processes
+- conserved hypotheticals, information pathways
+- conserved hypotheticals, intermediary metabolism and respiration
+- conserved hypotheticals, lipid metabolism
+- conserved hypotheticals, regulatory proteins
+- conserved hypotheticals, virulence, detoxification, adaptation
+- energy metabolism
+- fatty acid biosynthesis
+- information pathways
+- information pathways, conserved hypotheticals
+- insertion seqs and phages
+- insertion sequences and phages
+- intermediary metabolism and respiration
+- intermediary metabolism and respiration, conserved hypotheticals
+- intermediary metabolism and respiration, information pathways, conserved hypotheticals
+- intermediary metabolism and respiration, lipid metabolism
+- iron acquisition
+- lipid metabolism
+- lipid transport
+- mycolic acid biosynthesis
+- nucleotide metabolism
+- peptidoglycan biosynthesis
+- protein secretion
+- regulatory proteins
+- regulatory proteins, information pathways
+- serine/threonine protein kinase signaling
+- stable RNAs
 - transcription
 - translation
-- protein secretion
 - two-component signaling
-- serine/threonine protein kinase signaling
+- unknown
+- virulence, detoxification, adaptation
+- virulence, detoxification, adaptation, intermediary metabolism and respiration

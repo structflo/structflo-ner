@@ -1,12 +1,20 @@
+- affinity-based screening
+- affinity screening
+- biochemical screening
 - fragment-based screening
+- fragment based screening
+- fragment based
 - fragment screening
 - whole-cell screening
+- whole cell screening
 - target-based screening
 - high-throughput screening
 - HTS
 - phenotypic screening
 - DEL screening
 - DNA-encoded library screening
+- DNA-encoded DEL
+- DNA-encoded
 - biochemical assay
 - cell-based assay
 - MIC assay
@@ -36,3 +44,88 @@
 - low oxygen recovery assay
 - hypomorph screening
 - CRISPRi screening
+- fragment-based screening
+- fragment screening
+- whole-cell screening
+- phenotypic screening
+- target-based screening
+- high-throughput screening
+- HTS
+- high-content screening
+- HCS
+- image-based screening
+- biochemical assay
+- cell-based assay
+- DEL screening
+- DNA-encoded library screening
+- MIC assay
+- minimum inhibitory concentration assay
+- MBC assay
+- minimum bactericidal concentration assay
+- time-kill assay
+- checkerboard assay
+- synergy screening
+- FRET-based assay
+- fluorescence resonance energy transfer assay
+- fluorescence polarization assay
+- FP assay
+- thermal shift assay
+- TSA
+- differential scanning fluorimetry
+- DSF
+- surface plasmon resonance
+- SPR
+- isothermal titration calorimetry
+- ITC
+- X-ray crystallography
+- cryo-EM
+- cryo-electron microscopy
+- NMR screening
+- nuclear magnetic resonance screening
+- saturation transfer difference NMR
+- structure-based drug design
+- SBDD
+- virtual screening
+- in silico screening
+- molecular docking
+- pharmacophore modeling
+- machine learning screening
+- ML screening
+- ligand-based virtual screening
+- structure-based virtual screening
+- REMA
+- resazurin microtiter assay
+- MABA
+- microplate alamar blue assay
+- LORA
+- low oxygen recovery assay
+- luminescence-based assay
+- luciferase reporter phage assay
+- LRP
+- bronx box assay
+- GFP microplate assay
+- GFPMA
+- spot assay
+- agar proportion method
+- BACTEC MGIT assay
+- hypomorph screening
+- target-based whole-cell screening
+- Bio-Siv assay
+- nutrient starvation screening
+- carbon source-specific screening
+- CRISPRi screening
+- CRISPR-Cas9 screening
+- Tn-Seq
+- transposon sequencing
+- transposon mutagenesis screening
+- RB-TnSeq
+- random barcode transposon sequencing
+- barcoded transposon screening
+- whole genome sequencing screening
+- WGS screening
+- macrophage-based screening
+- intracellular assay
+- zebrafish embryo screening
+- zebrafish microinjection screen
+- ex vivo granuloma model
+- mouse efficacy model
