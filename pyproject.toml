@@ -17,6 +17,7 @@ dataframe = ["pandas>=1.5"]
 [dependency-groups]
 dev = [
     "pytest>=7",
+    "pytest-cov>=4",
     "pytest-mock>=3",
     "ruff>=0.8",
 ]

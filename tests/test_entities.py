@@ -122,6 +122,7 @@ class TestNERResult:
             "products",
             "functional_categories",
             "screening_methods",
+            "strains",
             "unclassified",
         }
         assert d["source_text"] == result.source_text

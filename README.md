@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://pypi.org/project/structflo-ner/"><img src="https://img.shields.io/pypi/pyversions/structflo-ner.svg" alt="Python Versions"></a>
-  <a href="https://pepy.tech/project/structflo-ner"><img src="https://static.pepy.tech/badge/structflo-ner" alt="Downloads"></a>
+<a href="https://pepy.tech/projects/structflo-ner"><img src="https://static.pepy.tech/personalized-badge/structflo-ner?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads" alt="PyPI Downloads"></a>
   <a href="https://github.com/structflo/structflo-ner/actions"><img src="https://img.shields.io/github/actions/workflow/status/structflo/structflo-ner/ci.yml?label=tests" alt="Tests"></a>
   <a href="https://codecov.io/gh/structflo/structflo-ner"><img src="https://codecov.io/gh/structflo/structflo-ner/branch/main/graph/badge.svg" alt="Coverage"></a>
   <a href="https://github.com/structflo/structflo-ner/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-green.svg" alt="License"></a>
@@ -29,19 +29,19 @@
 
 ---
 
-**structflo.ner** is a lightweight NER library specialized for pharmaceutical and biological sciences. It uses [LangExtract](https://github.com/langextract/langextract) and other fuzzy based tools to deliver **zero-configuration** entity extraction.
+**structflo.ner** is a lightweight NER library specialized for pharmaceutical and biological sciences. It uses [LangExtract](https://github.com/langextract/langextract) and fuzzy based tools to deliver **zero-configuration** entity extraction.
 
 It ships with two extraction engines:
 
-| | `NERExtractor` | `FastNERExtractor` |
-|---|---|---|
-| Approach | LLM-powered (Gemini, Ollama) | Dictionary-based (YAML gazetteers) |
-| Speed | ~10-60s per abstract | ~0.4-1s per abstract |
-| Novel entities | Discovers new entities | Known terms only |
-| Context awareness | Full contextual understanding | String matching (exact + fuzzy) |
-| Cost | API costs or local GPU | Free (no API calls) |
-| Setup | API key or Ollama | Zero config |
-| Output format | `NERResult` | `NERResult` (identical) |
+|                   | `NERExtractor`                | `FastNERExtractor`                 |
+| ----------------- | ----------------------------- | ---------------------------------- |
+| Approach          | LLM-powered (Gemini, Ollama)  | Dictionary-based (YAML gazetteers) |
+| Speed             | ~10-60s per abstract          | ~0.4-1s per abstract               |
+| Novel entities    | Discovers new entities        | Known terms only                   |
+| Context awareness | Full contextual understanding | String matching (exact + fuzzy)    |
+| Cost              | API costs or local GPU        | Free (no API calls)                |
+| Setup             | API key or Ollama             | Zero config                        |
+| Output format     | `NERResult`                   | `NERResult` (identical)            |
 
 ## Installation
 
@@ -205,11 +205,11 @@ result
 
 ### How matching works
 
-| Phase | Method | What it catches |
-|---|---|---|
-| 1 | **Exact match** | Case-sensitive and normalized dictionary lookups with word-boundary enforcement |
-| 1b | **Regex patterns** | Auto-derived patterns from accession number seeds (Rv tags, UniProt, PDB, etc.) |
-| 2 | **Fuzzy match** | Typos and minor variants via [rapidfuzz](https://github.com/rapidfuzz/rapidfuzz) (configurable threshold) |
+| Phase | Method             | What it catches                                                                                           |
+| ----- | ------------------ | --------------------------------------------------------------------------------------------------------- |
+| 1     | **Exact match**    | Case-sensitive and normalized dictionary lookups with word-boundary enforcement                           |
+| 1b    | **Regex patterns** | Auto-derived patterns from accession number seeds (Rv tags, UniProt, PDB, etc.)                           |
+| 2     | **Fuzzy match**    | Typos and minor variants via [rapidfuzz](https://github.com/rapidfuzz/rapidfuzz) (configurable threshold) |
 
 ```python
 # Fuzzy matching catches typos
@@ -224,17 +224,17 @@ strict = FastNERExtractor(fuzzy_threshold=0)
 
 The fast extractor ships with curated gazetteers for TB drug discovery:
 
-| Gazetteer | Examples |
-|---|---|
-| `accession_number` | Rv1305, B586_RS00005 |
-| `gene_name` | atpE, InhA, DprE1 |
-| `screening_method` | whole-cell screening, fragment-based screening |
-| `target` | InhA, DprE1, MmpL3 |
-| `compound_name` | Bedaquiline, Delamanid, Pretomanid |
-| `functional_category` | DNA replication, cell wall biosynthesis |
-| `strain` | M. tuberculosis H37Rv |
-| `product` | enoyl-ACP reductase, ATP synthase subunit c |
-| `disease` | TB, MDR-TB, XDR-TB |
+| Gazetteer             | Examples                                       |
+| --------------------- | ---------------------------------------------- |
+| `accession_number`    | Rv1305, B586_RS00005                           |
+| `gene_name`           | atpE, InhA, DprE1                              |
+| `screening_method`    | whole-cell screening, fragment-based screening |
+| `target`              | InhA, DprE1, MmpL3                             |
+| `compound_name`       | Bedaquiline, Delamanid, Pretomanid             |
+| `functional_category` | DNA replication, cell wall biosynthesis        |
+| `strain`              | M. tuberculosis H37Rv                          |
+| `product`             | enoyl-ACP reductase, ATP synthase subunit c    |
+| `disease`             | TB, MDR-TB, XDR-TB                             |
 
 ### Custom gazetteers
 
@@ -264,14 +264,14 @@ Profiles control which entity types are extracted. Use them to focus the model o
 
 ### Built-in profiles
 
-| Profile | Entity classes |
-|---|---|
-| `FULL` (default) | compounds, targets, diseases, bioactivities, assays, mechanisms |
-| `CHEMISTRY` | compound names, SMILES, CAS numbers, molecular formulas |
-| `BIOLOGY` | targets, gene names, protein names |
-| `BIOACTIVITY` | bioactivity measurements, assays |
-| `DISEASE` | diseases and clinical indications |
-| `TB` | TB drug discovery (compounds, targets, diseases, accessions, strains, screening methods, functional categories) |
+| Profile          | Entity classes                                                                                                  |
+| ---------------- | --------------------------------------------------------------------------------------------------------------- |
+| `FULL` (default) | compounds, targets, diseases, bioactivities, assays, mechanisms                                                 |
+| `CHEMISTRY`      | compound names, SMILES, CAS numbers, molecular formulas                                                         |
+| `BIOLOGY`        | targets, gene names, protein names                                                                              |
+| `BIOACTIVITY`    | bioactivity measurements, assays                                                                                |
+| `DISEASE`        | diseases and clinical indications                                                                               |
+| `TB`             | TB drug discovery (compounds, targets, diseases, accessions, strains, screening methods, functional categories) |
 
 ```python
 from structflo.ner import NERExtractor, CHEMISTRY
@@ -338,10 +338,10 @@ result.to_dict()
 
 Explore worked examples in the [`notebooks/`](notebooks/) directory:
 
-| Notebook | Description |
-|---|---|
-| [01_quickstart.ipynb](notebooks/01_quickstart.ipynb) | End-to-end extraction with cloud and local models, profiles, batch extraction |
-| [02_fast_ner.ipynb](notebooks/02_fast_ner.ipynb) | Fast dictionary-based NER — matching strategies, custom gazetteers, performance |
+| Notebook                                             | Description                                                                     |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------- |
+| [01_quickstart.ipynb](notebooks/01_quickstart.ipynb) | End-to-end extraction with cloud and local models, profiles, batch extraction   |
+| [02_fast_ner.ipynb](notebooks/02_fast_ner.ipynb)     | Fast dictionary-based NER — matching strategies, custom gazetteers, performance |
 
 ## Contributing
 
