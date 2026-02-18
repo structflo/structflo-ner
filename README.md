@@ -98,7 +98,7 @@ Any model served by [Ollama](https://ollama.com/) works  gemma, llama, mistral, 
 
 
 Render results as color-coded, interactive HTML directly in Jupyter notebooks:
-![Results](images/local-gen-viz.png)
+![Results](images/ner_visualization.gif)
 
 
 To get a PANDAS dataframe.
