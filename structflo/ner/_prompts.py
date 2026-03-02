@@ -18,9 +18,12 @@ BIOLOGY_PROMPT = (
 
 BIOACTIVITY_PROMPT = (
     "Extract bioactivity measurements and assay data from the text. "
-    "Include: potency values (IC50, EC50, Ki, Kd, GI50, CC50), selectivity ratios, "
+    "Include: potency values (IC50, MIC, EC50, Ki, Kd, GI50, CC50), selectivity ratios, "
     "percent inhibition values, and Hill coefficients. "
-    "For each value, capture the numeric value, unit (nM, µM, mM), and measurement type. "
+    "For each value, capture the numeric value, unit (nM, µM, mM, µg/mL, ng/mL), and measurement type. "
+    "Also capture the compound — its name, code name, or identifier (e.g. 'Compound 7', 'BTZ043', "
+    "'CHEMBL1234', 'SACC-3000') — that the measurement applies to, as a 'compound_name' attribute, "
+    "if it can be identified from the surrounding context. "
     "Also extract assay descriptions: cell lines used (e.g. 'HeLa', 'A549'), assay formats "
     "(e.g. 'cell viability', 'binding assay', 'enzymatic assay'), and organisms."
 )
@@ -40,8 +43,9 @@ FULL_PROMPT = (
     "- Chemical entities: compound names (generic, IUPAC, code names, brand names), "
     "SMILES strings (only if explicitly written), CAS numbers, molecular formulas.\n"
     "- Biological targets: protein names, gene names, receptor names, enzyme names, pathways.\n"
-    "- Bioactivity data: IC50, EC50, Ki, Kd, and other potency/selectivity measurements "
-    "with their numeric values and units.\n"
+    "- Bioactivity data: IC50, MIC, EC50, Ki, Kd, and other potency/selectivity measurements "
+    "with their numeric values, units, and the compound name or identifier they apply to "
+    "(captured as a 'compound_name' attribute).\n"
     "- Assay information: cell lines, assay formats, experimental organisms.\n"
     "- Diseases and indications: cancer types, disease names, therapeutic areas.\n"
     "- Mechanisms of action: binding modes, inhibition types, selectivity descriptions.\n"
@@ -52,6 +56,9 @@ FULL_PROMPT = (
 
 TB_PROMPT = (
     "Extract drug discovery entities from this tuberculosis research text.\n\n"
+    "For each bioactivity measurement (IC50, MIC, MIC90, EC50, CC50, etc.), capture the "
+    "compound name, code, or identifier it belongs to as a 'compound_name' attribute "
+    "(e.g. 'BTZ043 showed a MIC of 1 ng/mL' → compound_name: 'BTZ043').\n\n"
     "DISAMBIGUATION RULES:\n"
     "- Mycobacterial proteins (e.g. ClpC1, DprE1, InhA, AtpE, MmpL3, QcrB) "
     "are biological targets, NOT compounds.\n"

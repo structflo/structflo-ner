@@ -166,7 +166,12 @@ _BIOACTIVITY_EXAMPLE_1 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="IC50 of 2.3 nM",
-            attributes={"value": "2.3", "unit": "nM", "assay_type": "IC50"},
+            attributes={
+                "value": "2.3",
+                "unit": "nM",
+                "assay_type": "IC50",
+                "compound_name": "Compound 7",
+            },
         ),
         lx.data.Extraction(
             extraction_class="assay",
@@ -176,7 +181,12 @@ _BIOACTIVITY_EXAMPLE_1 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="EC50 of 45 nM",
-            attributes={"value": "45", "unit": "nM", "assay_type": "EC50"},
+            attributes={
+                "value": "45",
+                "unit": "nM",
+                "assay_type": "EC50",
+                "compound_name": "Compound 7",
+            },
         ),
         lx.data.Extraction(
             extraction_class="assay",
@@ -190,7 +200,12 @@ _BIOACTIVITY_EXAMPLE_1 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="Ki = 0.8 nM",
-            attributes={"value": "0.8", "unit": "nM", "assay_type": "Ki"},
+            attributes={
+                "value": "0.8",
+                "unit": "nM",
+                "assay_type": "Ki",
+                "compound_name": "Compound 7",
+            },
         ),
     ],
 )
@@ -317,7 +332,12 @@ _FULL_EXAMPLE_1 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="IC50 of 0.033 µM",
-            attributes={"value": "0.033", "unit": "µM", "assay_type": "IC50"},
+            attributes={
+                "value": "0.033",
+                "unit": "µM",
+                "assay_type": "IC50",
+                "compound_name": "Gefitinib",
+            },
         ),
         lx.data.Extraction(
             extraction_class="assay",
@@ -332,7 +352,12 @@ _FULL_EXAMPLE_1 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="IC50 of 0.4 µM",
-            attributes={"value": "0.4", "unit": "µM", "assay_type": "IC50"},
+            attributes={
+                "value": "0.4",
+                "unit": "µM",
+                "assay_type": "IC50",
+                "compound_name": "Gefitinib",
+            },
         ),
         lx.data.Extraction(
             extraction_class="mechanism_of_action",
@@ -418,7 +443,13 @@ _TB_EXAMPLE_1 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="MIC of 0.03 ug/mL",
-            attributes={"value": "0.03", "unit": "ug/mL", "assay_type": "MIC", "strain": "H37Rv"},
+            attributes={
+                "value": "0.03",
+                "unit": "ug/mL",
+                "assay_type": "MIC",
+                "strain": "H37Rv",
+                "compound_name": "Bedaquiline",
+            },
         ),
         lx.data.Extraction(
             extraction_class="assay",
@@ -491,12 +522,24 @@ _TB_EXAMPLE_2 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="MIC of 1 ng/mL",
-            attributes={"value": "1", "unit": "ng/mL", "assay_type": "MIC", "strain": "H37Rv"},
+            attributes={
+                "value": "1",
+                "unit": "ng/mL",
+                "assay_type": "MIC",
+                "strain": "H37Rv",
+                "compound_name": "BTZ043",
+            },
         ),
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="MIC of 4 ng/mL",
-            attributes={"value": "4", "unit": "ng/mL", "assay_type": "MIC", "strain": "Erdman"},
+            attributes={
+                "value": "4",
+                "unit": "ng/mL",
+                "assay_type": "MIC",
+                "strain": "Erdman",
+                "compound_name": "BTZ043",
+            },
         ),
         lx.data.Extraction(
             extraction_class="compound_name",
@@ -510,7 +553,12 @@ _TB_EXAMPLE_2 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="MIC of 0.6 ng/mL",
-            attributes={"value": "0.6", "unit": "ng/mL", "assay_type": "MIC"},
+            attributes={
+                "value": "0.6",
+                "unit": "ng/mL",
+                "assay_type": "MIC",
+                "compound_name": "PBTZ169",
+            },
         ),
         lx.data.Extraction(
             extraction_class="mechanism_of_action",
@@ -566,7 +614,12 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="IC50 of 85 nM",
-            attributes={"value": "85", "unit": "nM", "assay_type": "IC50"},
+            attributes={
+                "value": "85",
+                "unit": "nM",
+                "assay_type": "IC50",
+                "compound_name": "Compound 14a",
+            },
         ),
         lx.data.Extraction(
             extraction_class="screening_method",
@@ -584,7 +637,13 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="MIC90 of 0.5 uM",
-            attributes={"value": "0.5", "unit": "uM", "assay_type": "MIC90", "strain": "H37Rv"},
+            attributes={
+                "value": "0.5",
+                "unit": "uM",
+                "assay_type": "MIC90",
+                "strain": "H37Rv",
+                "compound_name": "Compound 14a",
+            },
         ),
         lx.data.Extraction(
             extraction_class="assay",
@@ -594,7 +653,12 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="EC50 of 1.2 uM",
-            attributes={"value": "1.2", "unit": "uM", "assay_type": "EC50"},
+            attributes={
+                "value": "1.2",
+                "unit": "uM",
+                "assay_type": "EC50",
+                "compound_name": "Compound 14a",
+            },
         ),
         lx.data.Extraction(
             extraction_class="assay",
@@ -604,7 +668,12 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="MIC of 3.1 uM",
-            attributes={"value": "3.1", "unit": "uM", "assay_type": "MIC"},
+            attributes={
+                "value": "3.1",
+                "unit": "uM",
+                "assay_type": "MIC",
+                "compound_name": "Compound 14a",
+            },
         ),
         lx.data.Extraction(
             extraction_class="assay",
@@ -614,7 +683,12 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
         lx.data.Extraction(
             extraction_class="bioactivity",
             extraction_text="CC50 >50 uM",
-            attributes={"value": ">50", "unit": "uM", "assay_type": "CC50"},
+            attributes={
+                "value": ">50",
+                "unit": "uM",
+                "assay_type": "CC50",
+                "compound_name": "Compound 14a",
+            },
         ),
     ],
 )
