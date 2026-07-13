@@ -46,6 +46,12 @@ class NERExtractor:
         model_url: Base URL for self-hosted models (e.g. Ollama at
             ``"http://localhost:11434"``). When set, langextract routes
             requests to this endpoint instead of a cloud API.
+        provider: Explicit langextract provider name (``"ollama"``,
+            ``"openai"``, ``"gemini"``). When set, routing is deterministic and
+            no longer depends on ``model_id`` matching a built-in regex — use
+            this for non-standard model names (e.g. ``"medgemma:latest"``) that
+            would otherwise fail to resolve. When ``None`` (default), the
+            provider is inferred from ``model_id`` as before.
         profile: Default :class:`EntityProfile` to use when no per-call
             profile is specified. Defaults to :data:`FULL`.
         extra_examples: Additional :class:`lx.data.ExampleData` objects that
@@ -63,6 +69,7 @@ class NERExtractor:
         model_id: str = "gemini-2.5-flash",
         api_key: str | None = None,
         model_url: str | None = None,
+        provider: str | None = None,
         profile: EntityProfile = FULL,
         extra_examples: list[lx.data.ExampleData] | None = None,
         langextract_kwargs: dict | None = None,
@@ -70,6 +77,7 @@ class NERExtractor:
         self._model_id = model_id
         self._api_key = api_key
         self._model_url = model_url
+        self._provider = provider
         self._default_profile = profile
         self._extra_examples = extra_examples or []
         self._langextract_kwargs = langextract_kwargs or {}
@@ -159,7 +167,30 @@ class NERExtractor:
     @property
     def _is_ollama(self) -> bool:
         """Return True when routing to an Ollama endpoint."""
-        return self._model_url is not None
+        return self._provider == "ollama" or (self._provider is None and self._model_url is not None)
+
+    def _build_config(self) -> "lx.factory.ModelConfig":
+        """Build an explicit ModelConfig for deterministic provider routing.
+
+        Provider-specific settings travel in ``provider_kwargs`` (passed to the
+        provider constructor): ``api_key`` for cloud providers, ``base_url`` +
+        ``num_ctx`` for Ollama.
+        """
+        from langextract import factory
+
+        provider_kwargs: dict = {}
+        if self._api_key is not None:
+            provider_kwargs["api_key"] = self._api_key
+        if self._model_url is not None:
+            provider_kwargs["base_url"] = self._model_url
+        if self._is_ollama:
+            # Ollama defaults to num_ctx=2048, far too small for few-shot NER.
+            provider_kwargs.setdefault("num_ctx", 8192)
+        return factory.ModelConfig(
+            model_id=self._model_id,
+            provider=self._provider,
+            provider_kwargs=provider_kwargs,
+        )
 
     def _run_extraction(
         self,
@@ -174,22 +205,29 @@ class NERExtractor:
         kwargs.setdefault("use_schema_constraints", True)
         kwargs.setdefault("show_progress", False)
 
-        # Ollama defaults to num_ctx=2048 which is far too small for
-        # few-shot NER prompts.  Set a sane default so users don't hit
-        # silent truncation.
-        if self._is_ollama:
-            lm_params = kwargs.setdefault("language_model_params", {})
-            lm_params.setdefault("num_ctx", 8192)
-
-        result = lx.extract(
-            text_or_documents=text,
-            prompt_description=prompt,
-            examples=examples,
-            model_id=self._model_id,
-            api_key=self._api_key,
-            model_url=self._model_url,
-            **kwargs,
-        )
+        if self._provider is not None:
+            # Explicit provider → deterministic routing via ModelConfig.
+            result = lx.extract(
+                text_or_documents=text,
+                prompt_description=prompt,
+                examples=examples,
+                config=self._build_config(),
+                **kwargs,
+            )
+        else:
+            # Legacy path: provider inferred from model_id regex by langextract.
+            if self._is_ollama:
+                lm_params = kwargs.setdefault("language_model_params", {})
+                lm_params.setdefault("num_ctx", 8192)
+            result = lx.extract(
+                text_or_documents=text,
+                prompt_description=prompt,
+                examples=examples,
+                model_id=self._model_id,
+                api_key=self._api_key,
+                model_url=self._model_url,
+                **kwargs,
+            )
 
         # lx.extract returns a list when given a list; we always pass a single string
         doc = result[0] if isinstance(result, list) else result

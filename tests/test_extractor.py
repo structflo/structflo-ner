@@ -122,6 +122,74 @@ class TestNERExtractorExtract:
         assert result.source_text == "My source text"
 
 
+class TestProviderRouting:
+    """Explicit provider selection routes deterministically via ModelConfig,
+    instead of relying on langextract's model_id regex inference."""
+
+    def _run_and_capture(self, monkeypatch, **init_kwargs):
+        from structflo.ner import extractor as extractor_mod
+
+        captured = {}
+
+        def fake_extract(**kwargs):
+            captured.update(kwargs)
+            return _make_annotated_doc([])
+
+        monkeypatch.setattr(extractor_mod.lx, "extract", fake_extract)
+        NERExtractor(**init_kwargs).extract("some text")
+        return captured
+
+    def test_provider_defaults_to_none(self):
+        assert NERExtractor()._provider is None
+
+    def test_provider_stored(self):
+        assert NERExtractor(provider="openai")._provider == "openai"
+
+    def test_no_provider_uses_legacy_model_id_path(self, monkeypatch):
+        captured = self._run_and_capture(
+            monkeypatch, model_id="gemma3:27b", model_url="http://ollama:11434"
+        )
+        assert captured["model_id"] == "gemma3:27b"
+        assert captured["model_url"] == "http://ollama:11434"
+        assert "config" not in captured
+
+    def test_explicit_provider_uses_config_not_top_level_model_id(self, monkeypatch):
+        captured = self._run_and_capture(
+            monkeypatch,
+            provider="ollama",
+            model_id="medgemma:latest",
+            model_url="http://ollama:11434",
+        )
+        # Deterministic routing: config carries provider + model_id, and the
+        # top-level model_id/model_url are NOT passed (would conflict with config).
+        assert "config" in captured
+        assert "model_id" not in captured
+        assert "model_url" not in captured
+        config = captured["config"]
+        assert config.provider == "ollama"
+        assert config.model_id == "medgemma:latest"
+
+    def test_ollama_provider_kwargs_carry_base_url_and_num_ctx(self, monkeypatch):
+        captured = self._run_and_capture(
+            monkeypatch,
+            provider="ollama",
+            model_id="medgemma:latest",
+            model_url="http://ollama:11434",
+        )
+        pk = captured["config"].provider_kwargs
+        assert pk["base_url"] == "http://ollama:11434"
+        assert pk["num_ctx"] == 8192
+
+    def test_cloud_provider_kwargs_carry_api_key(self, monkeypatch):
+        captured = self._run_and_capture(
+            monkeypatch, provider="openai", model_id="gpt-4o", api_key="sk-test"
+        )
+        pk = captured["config"].provider_kwargs
+        assert pk["api_key"] == "sk-test"
+        assert "num_ctx" not in pk
+        assert "base_url" not in pk
+
+
 class TestBuildPrompt:
     def test_prompt_includes_entity_class_constraint(self):
         extractor = NERExtractor()
