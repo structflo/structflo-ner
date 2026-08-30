@@ -53,7 +53,11 @@ class MechanismEntity(NEREntity):
 
 @dataclasses.dataclass(frozen=True)
 class AccessionEntity(NEREntity):
-    """A database accession: Rv locus tag, UniProt ID, or PDB code."""
+    """A biological database accession: Rv locus tag, UniProt ID, PDB code, or RefSeq ID.
+
+    Chemistry registry identifiers (ChEMBL, ZINC, DrugBank) and compound
+    programme codes are :class:`ChemicalEntity`, not accessions.
+    """
 
 
 @dataclasses.dataclass(frozen=True)

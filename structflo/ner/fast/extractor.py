@@ -13,7 +13,7 @@ from structflo.ner._entities import (
 )
 from structflo.ner.fast._loader import (
     _DEFAULT_GAZETTEER_DIR,
-    derive_accession_patterns,
+    derive_id_patterns,
     load_all_gazetteers,
 )
 from structflo.ner.fast._matcher import GazetteerMatcher, Match
@@ -72,24 +72,22 @@ class FastNERExtractor:
                 existing = gazetteers.get(entity_type, [])
                 gazetteers[entity_type] = existing + terms
 
-        # Auto-derive accession patterns from seed entries
-        accession_patterns = []
-        if "accession_number" in gazetteers:
-            accession_patterns = derive_accession_patterns(gazetteers["accession_number"])
+        # Curated compound ID patterns, plus accession patterns derived from seeds
+        id_patterns = derive_id_patterns(gazetteers)
 
         # Build the matcher
         self._matcher = GazetteerMatcher(
             gazetteers=gazetteers,
-            accession_patterns=accession_patterns,
+            id_patterns=id_patterns,
             fuzzy_threshold=fuzzy_threshold,
         )
 
         total_terms = sum(len(t) for t in gazetteers.values())
         logger.info(
-            "FastNERExtractor ready: %d gazetteers, %d terms, %d accession patterns",
+            "FastNERExtractor ready: %d gazetteers, %d terms, %d ID patterns",
             len(gazetteers),
             total_terms,
-            len(accession_patterns),
+            len(id_patterns),
         )
 
     def extract(

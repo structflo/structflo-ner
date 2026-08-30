@@ -285,7 +285,7 @@ class TestTBProfile:
             assert cls in TB.entity_classes
 
     def test_tb_examples_count(self):
-        assert len(TB.examples) == 4
+        assert len(TB.examples) == 5
         assert len(TB_CHEMISTRY.examples) == 2
         assert len(TB_BIOLOGY.examples) == 2
 

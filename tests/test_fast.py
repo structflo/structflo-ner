@@ -18,7 +18,7 @@ from structflo.ner._entities import (
     TargetEntity,
 )
 from structflo.ner.fast._loader import (
-    derive_accession_patterns,
+    derive_id_patterns,
     load_all_gazetteers,
     load_gazetteer,
 )
@@ -123,35 +123,68 @@ class TestLoadAllGazetteers:
         assert "target" in gazetteers
 
 
-class TestDeriveAccessionPatterns:
+def _accessions(seeds: list[str]):
+    """Derive patterns from accession seeds only (no compound gazetteer)."""
+    return derive_id_patterns({"accession_number": seeds})
+
+
+class TestDeriveIdPatterns:
     def test_rv_pattern_detected(self):
-        patterns = derive_accession_patterns(["Rv1484", "Rv3790"])
-        assert len(patterns) >= 1
-        descriptions = {desc for _, desc in patterns}
+        descriptions = {p.description for p in _accessions(["Rv1484", "Rv3790"])}
         assert "Rv locus tag" in descriptions
 
     def test_pdb_pattern_detected(self):
-        patterns = derive_accession_patterns(["4TZK"])
-        descriptions = {desc for _, desc in patterns}
+        descriptions = {p.description for p in _accessions(["4TZK"])}
         assert "PDB code" in descriptions
 
     def test_uniprot_pattern_detected(self):
-        patterns = derive_accession_patterns(["P9WGR1"])
-        descriptions = {desc for _, desc in patterns}
+        descriptions = {p.description for p in _accessions(["P9WGR1"])}
         assert "UniProt accession" in descriptions
 
     def test_mixed_seeds(self):
-        patterns = derive_accession_patterns(["Rv0005", "P9WGR1", "4TZK", "WP_003407354"])
-        descriptions = {desc for _, desc in patterns}
+        descriptions = {
+            p.description for p in _accessions(["Rv0005", "P9WGR1", "4TZK", "WP_003407354"])
+        }
         assert "Rv locus tag" in descriptions
         assert "UniProt accession" in descriptions
         assert "PDB code" in descriptions
         assert "NCBI RefSeq" in descriptions
 
     def test_deduplicates(self):
-        patterns = derive_accession_patterns(["Rv0005", "Rv1484", "Rv3790"])
-        descriptions = [desc for _, desc in patterns]
+        descriptions = [p.description for p in _accessions(["Rv0005", "Rv1484", "Rv3790"])]
         assert descriptions.count("Rv locus tag") == 1
+
+    def test_derived_accession_patterns_carry_their_type(self):
+        derived = [p for p in _accessions(["Rv0005"]) if p.description == "Rv locus tag"]
+        assert [p.entity_type for p in derived] == ["accession_number"]
+
+    def test_compound_patterns_need_no_seed(self):
+        """Chemistry registry patterns are curated, not activated by a gazetteer entry."""
+        descriptions = {p.description for p in derive_id_patterns({})}
+        assert "ChEMBL ID" in descriptions
+        assert "SACC series" in descriptions
+
+    def test_compound_patterns_precede_accession_patterns(self):
+        """Ordering is load-bearing: the matcher gives the first pattern the span."""
+        patterns = derive_id_patterns({"accession_number": ["4TZK", "Rv0005"]})
+        types = [p.entity_type for p in patterns]
+        assert types.index("accession_number") > max(
+            i for i, t in enumerate(types) if t != "accession_number"
+        )
+
+    def test_pdb_pattern_requires_a_letter(self):
+        """Bare four-digit numbers (years, counts) are not PDB codes."""
+        pdb = next(p for p in _accessions(["4TZK"]) if p.description == "PDB code")
+        assert pdb.regex.search("4TZK")
+        assert pdb.regex.search("1P44")
+        assert not pdb.regex.search("in 2019 the trial")
+        assert not pdb.regex.search("n = 1234")
+
+    def test_cas_check_digit_rejects_dates(self):
+        cas = next(p for p in derive_id_patterns({}) if p.description == "CAS number")
+        assert cas.validate("50-78-2")  # aspirin
+        assert not cas.validate("2020-11-5")  # a date
+        assert not cas.validate("100-50-3")  # a dose range
 
 
 # ---------------------------------------------------------------------------
@@ -214,10 +247,9 @@ class TestGazetteerMatcher:
         assert text[m.char_start : m.char_end] == "InhA"
 
     def test_regex_accession_matching(self):
-        patterns = derive_accession_patterns(["Rv0005"])
         matcher = GazetteerMatcher(
             gazetteers={"target": ["InhA"]},
-            accession_patterns=patterns,
+            id_patterns=_accessions(["Rv0005"]),
             fuzzy_threshold=0,
         )
         matches = matcher.match("The gene Rv1484 encodes InhA")
@@ -226,10 +258,9 @@ class TestGazetteerMatcher:
         assert accession_matches[0].text == "Rv1484"
 
     def test_regex_matches_rv_with_c_suffix(self):
-        patterns = derive_accession_patterns(["Rv3854c"])
         matcher = GazetteerMatcher(
             gazetteers={},
-            accession_patterns=patterns,
+            id_patterns=_accessions(["Rv3854c"]),
             fuzzy_threshold=0,
         )
         matches = matcher.match("Rv3854c encodes EthA")
@@ -296,6 +327,52 @@ class TestFastNERExtractor:
         assert len(result.accessions) >= 1
         assert any(a.text == "Rv2043c" for a in result.accessions)
         assert all(isinstance(a, AccessionEntity) for a in result.accessions)
+
+    def test_compound_registry_ids_are_compounds(self):
+        """CHEMBL and friends resolve as compound_name via regex — no LLM involved."""
+        extractor = FastNERExtractor(fuzzy_threshold=0)
+        result = extractor.extract("CHEMBL4521987, ZINC000012345678 and DB00945 were screened.")
+        found = {c.text for c in result.compounds}
+        assert {"CHEMBL4521987", "ZINC000012345678", "DB00945"} <= found
+        assert all(isinstance(c, ChemicalEntity) for c in result.compounds)
+        assert all(c.attributes["match_method"] == "regex" for c in result.compounds)
+        assert result.accessions == []
+
+    def test_programme_codes_are_compounds(self):
+        extractor = FastNERExtractor(fuzzy_threshold=0)
+        result = extractor.extract("SACC-3060 and TBDA-01187 were profiled against LGENI-4471.")
+        assert {"SACC-3060", "TBDA-01187", "LGENI-4471"} <= {c.text for c in result.compounds}
+        assert result.accessions == []
+
+    def test_programme_code_not_split_by_pdb_pattern(self):
+        """With a PDB seed active, SACC-3060 must be claimed whole, not just '3060'."""
+        extractor = FastNERExtractor(
+            fuzzy_threshold=0,
+            extra_gazetteers={"accession_number": ["4TZK"]},
+        )
+        result = extractor.extract("SACC-3060 was docked into 4TZK.")
+        assert [c.text for c in result.compounds] == ["SACC-3060"]
+        assert [a.text for a in result.accessions] == ["4TZK"]
+
+    def test_biological_accessions_still_accessions(self):
+        extractor = FastNERExtractor(
+            fuzzy_threshold=0,
+            extra_gazetteers={"accession_number": ["P9WGR1", "4TZK"]},
+        )
+        result = extractor.extract("Rv1484 (UniProt P9WPS1) was modelled on PDB 1P44.")
+        assert {"Rv1484", "P9WPS1", "1P44"} <= {a.text for a in result.accessions}
+        assert all(isinstance(a, AccessionEntity) for a in result.accessions)
+        assert result.compounds == []
+
+    def test_mycobrowser_mt_pattern_unregressed(self):
+        extractor = FastNERExtractor(fuzzy_threshold=0)
+        result = extractor.extract("The locus MT18B_0001 is annotated in Mycobrowser.")
+        assert any(a.text == "MT18B_0001" for a in result.accessions)
+
+    def test_cas_number_extracted_but_dates_are_not(self):
+        extractor = FastNERExtractor(fuzzy_threshold=0)
+        assert [c.text for c in extractor.extract("aspirin (50-78-2)").compounds] == ["50-78-2"]
+        assert extractor.extract("submitted 2020-11-5").compounds == []
 
     def test_to_dataframe(self):
         pytest.importorskip("pandas")

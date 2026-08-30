@@ -19,10 +19,10 @@ from structflo.ner.fast import FastNERExtractor
 fast = FastNERExtractor()
 result = fast.extract("Bedaquiline inhibits AtpE (Rv1305) in MDR-TB.")
 
-print(result.compounds)    # [ChemicalEntity(text='Bedaquiline', ...)]
-print(result.targets)      # [TargetEntity(text='AtpE', ...)]
-print(result.accessions)   # [AccessionEntity(text='Rv1305', ...)]
-print(result.diseases)     # [DiseaseEntity(text='MDR-TB', ...)]
+print(result.compounds)  # [ChemicalEntity(text='Bedaquiline', ...)]
+print(result.targets)  # [TargetEntity(text='AtpE', ...)]
+print(result.accessions)  # [AccessionEntity(text='Rv1305', ...)]
+print(result.diseases)  # [DiseaseEntity(text='MDR-TB', ...)]
 
 df = result.to_dataframe()
 result.display()  # interactive HTML in Jupyter
@@ -41,23 +41,45 @@ Looks up every text span against a normalized dictionary built from the YAML gaz
 
 Word boundaries are enforced — "Rho" won't match inside "Rhodamine".
 
-### Phase 1b — Regex Patterns (Accession Numbers)
-Seed entries in `accession_number.yml` auto-derive regex patterns for entire ID families:
+### Phase 1b — Regex Patterns (Structured Identifiers)
+Two families of pattern run here, compound patterns first. Order matters: the
+matcher gives each span to the first pattern that claims it, and the PDB rule
+would otherwise take the `3060` out of `SACC-3060`.
+
+**Compound identifiers** — curated in `_loader.py`, always active, no seed needed:
+
+| Pattern | Matches | Class |
+|---|---|---|
+| `CHEMBL\d+`, `SCHEMBL\d+`, `CHEBI:\d+` | ChEMBL / SureChEMBL / ChEBI | `compound_name` |
+| `DB\d{5}`, `ZINC\d{6,}`, `HMDB\d{5,7}`, `DTX[SC]ID\d+` | DrugBank, ZINC, HMDB, CompTox | `compound_name` |
+| `NSC-?\d{3,6}`, `NCGC\d{5,}`, InChIKey | NCI, NCATS, InChIKey | `compound_name` |
+| `EN300-\d+`, `Z\d{8,10}`, `MolPort-…`, `MCULE-…`, `STK\d{6}` | vendor catalogues | `compound_name` |
+| `SACC-?\d{3,}`, `TBDA-?\d{3,}`, `TBA-?\d{3,}`, `GSK-?\d{3,}`, … | TB / ND programme codes | `compound_name` |
+| `\d{2,7}-\d{2}-\d` + check digit | CAS registry numbers | `cas_number` |
+
+The CAS check digit is validated — without it the pattern also matches dates
+(`2020-11-5`) and dose ranges (`100-50-3`).
+
+**Accession numbers** — seed entries in `accession_number.yml` activate a family,
+so a deployment's own gazetteer decides which ones apply:
 
 | Seed | Auto-derived Pattern | Matches |
 |---|---|---|
 | `Rv0005` | `Rv\d{4}[c]?` | All Rv locus tags |
 | `MT0005` | `MT\w+` | Mycobrowser IDs |
 | `P9WGR1` | `[OPQ][0-9][A-Z0-9]{3}[0-9]` | UniProt accessions |
-| `4TZK` | `[0-9][A-Z0-9]{3}` | PDB codes |
+| `4TZK` | `(?=[A-Z0-9]{0,3}[A-Z])[1-9][A-Z0-9]{3}` | PDB codes |
 | `WP_003407354` | `WP_\d+` | NCBI RefSeq proteins |
+
+The PDB pattern requires at least one letter; without that guard it matches
+every four-digit number in the corpus.
 
 ### Phase 2 — Fuzzy Match
 Unmatched "entity-like" tokens (capitalized, contain digits, length ≥ 4) are compared against the dictionary using rapidfuzz. Catches typos and minor variants.
 
 ```python
 # Configurable threshold (0–100, default 85)
-strict = FastNERExtractor(fuzzy_threshold=0)   # disable fuzzy
+strict = FastNERExtractor(fuzzy_threshold=0)  # disable fuzzy
 lenient = FastNERExtractor(fuzzy_threshold=75)  # more permissive
 ```
 
@@ -128,10 +150,10 @@ fast = FastNERExtractor(
 `FastNERExtractor` produces identical `NERResult` objects as the LLM-based `NERExtractor`. Everything downstream works the same:
 
 ```python
-result.all_entities()    # flat list
-result.to_dict()         # serializable dict
-result.to_dataframe()    # pandas DataFrame
-result.display()         # interactive HTML
+result.all_entities()  # flat list
+result.to_dict()  # serializable dict
+result.to_dataframe()  # pandas DataFrame
+result.display()  # interactive HTML
 ```
 
 Each entity includes `match_method` ("exact", "regex", or "fuzzy") and `canonical` (the gazetteer term it matched) in its `attributes` dict.

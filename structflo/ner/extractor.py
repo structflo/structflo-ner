@@ -167,9 +167,11 @@ class NERExtractor:
     @property
     def _is_ollama(self) -> bool:
         """Return True when routing to an Ollama endpoint."""
-        return self._provider == "ollama" or (self._provider is None and self._model_url is not None)
+        return self._provider == "ollama" or (
+            self._provider is None and self._model_url is not None
+        )
 
-    def _build_config(self) -> "lx.factory.ModelConfig":
+    def _build_config(self) -> lx.factory.ModelConfig:
         """Build an explicit ModelConfig for deterministic provider routing.
 
         Provider-specific settings travel in ``provider_kwargs`` (passed to the

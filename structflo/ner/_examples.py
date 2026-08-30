@@ -804,11 +804,68 @@ _TB_EXAMPLE_4 = lx.data.ExampleData(
     ],
 )
 
+# Contrastive identifier example: chemistry registry ids and programme codes in
+# the same text as biological accessions, so the model sees where each one goes.
+_TB_EXAMPLE_5 = lx.data.ExampleData(
+    text=(
+        "SACC-3060 (CHEMBL4521987) inhibited DprE1, the decaprenylphosphoryl-beta-D-ribose "
+        "oxidase encoded by Rv3790, with an IC50 of 120 nM. Docking used UniProt P9WJG3 "
+        "and the PDB structure 4TZK. The related programme compound TBDA-01187 was inactive."
+    ),
+    extractions=[
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="SACC-3060",
+            attributes={"synonyms": "CHEMBL4521987"},
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="CHEMBL4521987",
+        ),
+        lx.data.Extraction(
+            extraction_class="target",
+            extraction_text="DprE1",
+            attributes={"gene_name": "Rv3790", "protein_family": "oxidase"},
+        ),
+        lx.data.Extraction(
+            extraction_class="product",
+            extraction_text="decaprenylphosphoryl-beta-D-ribose oxidase",
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="Rv3790",
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="IC50 of 120 nM",
+            attributes={
+                "value": "120",
+                "unit": "nM",
+                "assay_type": "IC50",
+                "compound_name": "SACC-3060",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="P9WJG3",
+        ),
+        lx.data.Extraction(
+            extraction_class="accession_number",
+            extraction_text="4TZK",
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="TBDA-01187",
+        ),
+    ],
+)
+
 TB_EXAMPLES: list[lx.data.ExampleData] = [
     _TB_EXAMPLE_1,
     _TB_EXAMPLE_2,
     _TB_EXAMPLE_3,
     _TB_EXAMPLE_4,
+    _TB_EXAMPLE_5,
 ]
 
 TB_CHEMISTRY_EXAMPLES: list[lx.data.ExampleData] = [

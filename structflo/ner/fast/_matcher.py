@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from rapidfuzz import fuzz
 
+from structflo.ner.fast._loader import IdPattern
 from structflo.ner.fast._normalize import expand_variants, normalize
 
 
@@ -31,18 +32,19 @@ class GazetteerMatcher:
     """Multi-phase matching engine for gazetteer-based NER.
 
     Phase 1: Exact dictionary matching via sliding window over normalized text.
-    Phase 1b: Regex pattern matching for structured IDs (accession numbers).
+    Phase 1b: Regex pattern matching for structured IDs (compound registry
+    identifiers and accession numbers).
     Phase 2: Fuzzy matching for remaining unmatched candidate tokens.
     """
 
     def __init__(
         self,
         gazetteers: dict[str, list[str]],
-        accession_patterns: list[tuple[re.Pattern[str], str]] | None = None,
+        id_patterns: list[IdPattern] | None = None,
         fuzzy_threshold: int = 85,
     ) -> None:
         self._fuzzy_threshold = fuzzy_threshold
-        self._accession_patterns = accession_patterns or []
+        self._id_patterns = id_patterns or []
 
         # Build lookup structures
         # _norm_to_canonical: normalized_variant → (canonical_term, entity_type)
@@ -77,7 +79,7 @@ class GazetteerMatcher:
         # Phase 1: Exact matching (case-sensitive first, then normalized)
         matches.extend(self._exact_match(text, occupied))
 
-        # Phase 1b: Regex patterns for accession numbers
+        # Phase 1b: Regex patterns for structured identifiers
         matches.extend(self._regex_match(text, occupied))
 
         # Phase 2: Fuzzy matching on remaining tokens
@@ -157,17 +159,25 @@ class GazetteerMatcher:
         return matches
 
     def _regex_match(self, text: str, occupied: set[int]) -> list[Match]:
-        """Phase 1b: Regex pattern matching for structured accession IDs."""
+        """Phase 1b: Regex pattern matching for structured identifiers.
+
+        Patterns are applied in list order and the first to claim a span wins,
+        so ``derive_id_patterns`` puts compound patterns ahead of accession
+        ones: the PDB rule would otherwise take the ``3060`` out of
+        ``SACC-3060``, and the Mycobrowser rule would take ``MT4501`` whole.
+        """
         matches: list[Match] = []
 
-        for pattern, _description in self._accession_patterns:
-            for m in pattern.finditer(text):
+        for pattern in self._id_patterns:
+            for m in pattern.regex.finditer(text):
                 start, end = m.start(), m.end()
+                if pattern.validate is not None and not pattern.validate(m.group()):
+                    continue
                 if not self._overlaps(occupied, start, end):
                     matches.append(
                         Match(
                             text=m.group(),
-                            entity_type="accession_number",
+                            entity_type=pattern.entity_type,
                             char_start=start,
                             char_end=end,
                             canonical=m.group(),
