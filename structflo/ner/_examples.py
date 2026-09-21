@@ -158,8 +158,8 @@ BIOLOGY_EXAMPLES: list[lx.data.ExampleData] = [
 
 _BIOACTIVITY_EXAMPLE_1 = lx.data.ExampleData(
     text=(
-        "Compound 7 inhibited EGFR with an IC50 of 2.3 nM in a cell-free enzymatic assay "
-        "and showed an EC50 of 45 nM in A549 (human lung adenocarcinoma) cell proliferation assay. "
+        "Compound 7 (CHEMBL5171042) inhibited EGFR with an IC50 of 2.3 nM in a cell-free "
+        "enzymatic assay and showed an EC50 of 45 nM in A549 (human lung adenocarcinoma) cell proliferation assay. "
         "Selectivity over ERBB2 was >100-fold (Ki = 0.8 nM vs 95 nM)."
     ),
     extractions=[
@@ -170,7 +170,8 @@ _BIOACTIVITY_EXAMPLE_1 = lx.data.ExampleData(
                 "value": "2.3",
                 "unit": "nM",
                 "assay_type": "IC50",
-                "compound_name": "Compound 7",
+                "compound_name": "CHEMBL5171042",
+                "assay": "cell-free enzymatic assay",
             },
         ),
         lx.data.Extraction(
@@ -185,7 +186,8 @@ _BIOACTIVITY_EXAMPLE_1 = lx.data.ExampleData(
                 "value": "45",
                 "unit": "nM",
                 "assay_type": "EC50",
-                "compound_name": "Compound 7",
+                "compound_name": "CHEMBL5171042",
+                "assay": "A549 cell proliferation assay",
             },
         ),
         lx.data.Extraction(
@@ -204,7 +206,7 @@ _BIOACTIVITY_EXAMPLE_1 = lx.data.ExampleData(
                 "value": "0.8",
                 "unit": "nM",
                 "assay_type": "Ki",
-                "compound_name": "Compound 7",
+                "compound_name": "CHEMBL5171042",
             },
         ),
     ],
@@ -337,6 +339,7 @@ _FULL_EXAMPLE_1 = lx.data.ExampleData(
                 "unit": "µM",
                 "assay_type": "IC50",
                 "compound_name": "Gefitinib",
+                "assay": "cell-free biochemical assay",
             },
         ),
         lx.data.Extraction(
@@ -357,6 +360,7 @@ _FULL_EXAMPLE_1 = lx.data.ExampleData(
                 "unit": "µM",
                 "assay_type": "IC50",
                 "compound_name": "Gefitinib",
+                "assay": "A431 cells",
             },
         ),
         lx.data.Extraction(
@@ -449,6 +453,7 @@ _TB_EXAMPLE_1 = lx.data.ExampleData(
                 "assay_type": "MIC",
                 "strain": "H37Rv",
                 "compound_name": "Bedaquiline",
+                "assay": "MABA",
             },
         ),
         lx.data.Extraction(
@@ -619,6 +624,7 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
                 "unit": "nM",
                 "assay_type": "IC50",
                 "compound_name": "Compound 14a",
+                "assay": "biochemical assay",
             },
         ),
         lx.data.Extraction(
@@ -643,6 +649,7 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
                 "assay_type": "MIC90",
                 "strain": "H37Rv",
                 "compound_name": "Compound 14a",
+                "assay": "REMA",
             },
         ),
         lx.data.Extraction(
@@ -658,6 +665,7 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
                 "unit": "uM",
                 "assay_type": "EC50",
                 "compound_name": "Compound 14a",
+                "assay": "THP-1 macrophage infection assay",
             },
         ),
         lx.data.Extraction(
@@ -673,6 +681,7 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
                 "unit": "uM",
                 "assay_type": "MIC",
                 "compound_name": "Compound 14a",
+                "assay": "LORA",
             },
         ),
         lx.data.Extraction(
@@ -688,6 +697,7 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
                 "unit": "uM",
                 "assay_type": "CC50",
                 "compound_name": "Compound 14a",
+                "assay": "HepG2 cells",
             },
         ),
     ],
@@ -860,12 +870,123 @@ _TB_EXAMPLE_5 = lx.data.ExampleData(
     ],
 )
 
+# Table as Docling emits it: the column header names the assay, the endpoint
+# and unit come from the footnote, and every cell is its own bioactivity. The
+# ID column, not the deck-local row label, names the compound.
+_TB_EXAMPLE_6 = lx.data.ExampleData(
+    text=(
+        "Table 2. Whole-cell activity\n\n"
+        "| Cpd | ID | MABA | THP-1 | Vero |\n"
+        "| --- | --- | --- | --- | --- |\n"
+        "| 21a | SACC-4412 | 0.12 | 0.9 | >50 |\n"
+        "| 21b | CHEMBL5290347 | <0.03 | 2.4* | 18.5 |\n\n"
+        "MABA: MIC90 (µM) against M. tuberculosis H37Rv. THP-1: intracellular EC90 (µM). "
+        "Vero: CC50 (µM). *Single determination."
+    ),
+    extractions=[
+        lx.data.Extraction(
+            extraction_class="assay",
+            extraction_text="MABA",
+            attributes={"assay_format": "whole-cell", "strain": "H37Rv"},
+        ),
+        lx.data.Extraction(
+            extraction_class="assay",
+            extraction_text="THP-1",
+            attributes={"cell_line": "THP-1", "assay_format": "intracellular"},
+        ),
+        lx.data.Extraction(
+            extraction_class="assay",
+            extraction_text="Vero",
+            attributes={"cell_line": "Vero", "assay_format": "cytotoxicity"},
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="SACC-4412",
+            attributes={"synonyms": "21a"},
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="0.12",
+            attributes={
+                "value": "0.12",
+                "unit": "µM",
+                "assay_type": "MIC90",
+                "strain": "H37Rv",
+                "compound_name": "SACC-4412",
+                "assay": "MABA",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="0.9",
+            attributes={
+                "value": "0.9",
+                "unit": "µM",
+                "assay_type": "EC90",
+                "compound_name": "SACC-4412",
+                "assay": "THP-1",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text=">50",
+            attributes={
+                "value": ">50",
+                "unit": "µM",
+                "assay_type": "CC50",
+                "compound_name": "SACC-4412",
+                "assay": "Vero",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="CHEMBL5290347",
+            attributes={"synonyms": "21b"},
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="<0.03",
+            attributes={
+                "value": "<0.03",
+                "unit": "µM",
+                "assay_type": "MIC90",
+                "strain": "H37Rv",
+                "compound_name": "CHEMBL5290347",
+                "assay": "MABA",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="2.4",
+            attributes={
+                "value": "2.4",
+                "unit": "µM",
+                "assay_type": "EC90",
+                "compound_name": "CHEMBL5290347",
+                "assay": "THP-1",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="18.5",
+            attributes={
+                "value": "18.5",
+                "unit": "µM",
+                "assay_type": "CC50",
+                "compound_name": "CHEMBL5290347",
+                "assay": "Vero",
+            },
+        ),
+    ],
+)
+
 TB_EXAMPLES: list[lx.data.ExampleData] = [
     _TB_EXAMPLE_1,
     _TB_EXAMPLE_2,
     _TB_EXAMPLE_3,
     _TB_EXAMPLE_4,
     _TB_EXAMPLE_5,
+    _TB_EXAMPLE_6,
 ]
 
 TB_CHEMISTRY_EXAMPLES: list[lx.data.ExampleData] = [

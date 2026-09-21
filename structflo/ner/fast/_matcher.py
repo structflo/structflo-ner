@@ -275,8 +275,9 @@ def _build_position_map(original: str, normalized: str) -> list[int]:
 
         # Advance original pointer to find the matching character
         while orig_idx < len(original):
-            orig_lower = original[orig_idx].lower()
-            if orig_lower == norm_char:
+            # normalize() the char too: a newline became " " and an en dash "-",
+            # and comparing raw chars would desync every position after them.
+            if (normalize(original[orig_idx]) or " ") == norm_char:
                 position_map.append(orig_idx)
                 orig_idx += 1
                 break

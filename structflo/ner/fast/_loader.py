@@ -89,8 +89,13 @@ _COMPOUND_ID_PATTERNS: list[IdPattern] = [
 _ACCESSION_PATTERNS: list[tuple[re.Pattern[str], re.Pattern[str], str]] = [
     # Rv locus tags: Rv0005, Rv3854c
     (re.compile(r"^Rv\d{4}[c]?$"), re.compile(r"\bRv\d{4}[c]?\b"), "Rv locus tag"),
-    # Mycobrowser MT IDs: MT0005, MTCI00.01
-    (re.compile(r"^MT\w+$"), re.compile(r"\bMT\w+\b"), "Mycobrowser ID"),
+    # Mycobrowser MT IDs: MT0005, MT18B_0001, MTB000001. The digit run keeps
+    # MTT (viability assay), MTX and MTD from matching.
+    (
+        re.compile(r"^MT[A-Z]{0,2}\d{2,}\w*$"),
+        re.compile(r"\bMT[A-Z]{0,2}\d{2,}\w*\b"),
+        "Mycobrowser ID",
+    ),
     # UniProt accessions: P9WGR1, O53617
     (
         re.compile(r"^[OPQ][0-9][A-Z0-9]{3}[0-9]$"),

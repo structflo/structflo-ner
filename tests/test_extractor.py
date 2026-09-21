@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 import langextract as lx
 
 from structflo.ner import (
+    BIOACTIVITY,
     BIOLOGY,
     CHEMISTRY,
     FULL,
@@ -284,8 +285,21 @@ class TestTBProfile:
         for cls in TB_BIOLOGY.entity_classes:
             assert cls in TB.entity_classes
 
+    def test_bioactivity_schema_has_assay(self):
+        """langextract builds the output schema from example attribute keys, so an
+        `assay` slot exists only if some bioactivity example carries one."""
+        for profile in (TB, BIOACTIVITY, FULL):
+            keys = {
+                k
+                for ex in profile.examples
+                for e in ex.extractions
+                if e.extraction_class == "bioactivity"
+                for k in (e.attributes or {})
+            }
+            assert {"value", "unit", "assay_type", "compound_name", "assay"} <= keys, profile.name
+
     def test_tb_examples_count(self):
-        assert len(TB.examples) == 5
+        assert len(TB.examples) == 6
         assert len(TB_CHEMISTRY.examples) == 2
         assert len(TB_BIOLOGY.examples) == 2
 

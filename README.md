@@ -334,6 +334,20 @@ df = result.to_dataframe()
 result.to_dict()
 ```
 
+Each bioactivity carries its measurement in `attributes`:
+
+| Attribute       | Example                     | Meaning                                                    |
+| --------------- | --------------------------- | ---------------------------------------------------------- |
+| `value`         | `>20.0`                     | number as reported, qualifier kept                         |
+| `unit`          | `µM`                        | unit as written                                            |
+| `assay_type`    | `CC50`                      | the endpoint (IC50, MIC90, GI50, ED90, ...)                |
+| `assay`         | `HepG2 MTT`                 | assay, cell line or read-out the value was measured in     |
+| `compound_name` | `8t`                        | compound the value belongs to                              |
+| `strain`        | `H37Rv`                     | organism or strain (`TB` profile only)                     |
+
+An attribute the text does not state comes back as the string `"None"` with
+providers that enforce a strict schema (OpenAI), or is absent otherwise.
+
 
 ## Notebooks
 

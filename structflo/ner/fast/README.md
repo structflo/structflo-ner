@@ -66,7 +66,7 @@ so a deployment's own gazetteer decides which ones apply:
 | Seed | Auto-derived Pattern | Matches |
 |---|---|---|
 | `Rv0005` | `Rv\d{4}[c]?` | All Rv locus tags |
-| `MT0005` | `MT\w+` | Mycobrowser IDs |
+| `MT0005` | `MT[A-Z]{0,2}\d{2,}\w*` | Mycobrowser IDs (not MTT, MTX) |
 | `P9WGR1` | `[OPQ][0-9][A-Z0-9]{3}[0-9]` | UniProt accessions |
 | `4TZK` | `(?=[A-Z0-9]{0,3}[A-Z])[1-9][A-Z0-9]{3}` | PDB codes |
 | `WP_003407354` | `WP_\d+` | NCBI RefSeq proteins |

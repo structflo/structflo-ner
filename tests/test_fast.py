@@ -180,6 +180,13 @@ class TestDeriveIdPatterns:
         assert not pdb.regex.search("in 2019 the trial")
         assert not pdb.regex.search("n = 1234")
 
+    def test_mycobrowser_pattern_needs_locus_digits(self):
+        """MTT (viability assay), MTX and MTD are not Mycobrowser loci."""
+        mt = next(p for p in _accessions(["MT18B_0001"]) if p.description == "Mycobrowser ID")
+        for locus in ["MT0005", "MT18B_0001", "MTB000001"]:
+            assert mt.regex.fullmatch(locus), locus
+        assert not mt.regex.search("HepG2 MTT, MTX and MTD read-outs")
+
     def test_cas_check_digit_rejects_dates(self):
         cas = next(p for p in derive_id_patterns({}) if p.description == "CAS number")
         assert cas.validate("50-78-2")  # aspirin
@@ -245,6 +252,13 @@ class TestGazetteerMatcher:
         assert len(inha_matches) == 1
         m = inha_matches[0]
         assert text[m.char_start : m.char_end] == "InhA"
+
+    def test_char_offsets_survive_newlines(self):
+        """normalize() folds a newline into a space; offsets after it must not drift."""
+        matcher = self._simple_matcher(fuzzy_threshold=0)
+        text = "Targets:\nINHA and\n\nDPRE1."
+        found = {m.canonical: text[m.char_start : m.char_end] for m in matcher.match(text)}
+        assert found == {"InhA": "INHA", "DprE1": "DPRE1"}
 
     def test_regex_accession_matching(self):
         matcher = GazetteerMatcher(
