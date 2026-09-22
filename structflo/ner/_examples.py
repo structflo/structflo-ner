@@ -984,7 +984,8 @@ _TB_EXAMPLE_6 = lx.data.ExampleData(
 
 # Strain panel: organism column headers are the strain, a protein column the
 # target, a cytotoxicity column the assay; a column dosed with a second drug
-# names the combination partner. The disease stays a disease entity.
+# names the combination partner, which is also a compound. The disease stays a
+# disease entity.
 _TB_EXAMPLE_7 = lx.data.ExampleData(
     text=(
         "Table 3. Antibacterial activity against hospital-acquired pneumonia isolates\n\n"
@@ -1004,6 +1005,10 @@ _TB_EXAMPLE_7 = lx.data.ExampleData(
             extraction_class="compound_name",
             extraction_text="CHEMBL5311027",
             attributes={"synonyms": "9c"},
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="polymyxin B",
         ),
         lx.data.Extraction(
             extraction_class="bioactivity",
