@@ -29,6 +29,10 @@ def extraction_to_entity(extraction: lx.data.Extraction) -> NEREntity:
     attributes: dict[str, str] = {}
     if extraction.attributes:
         for key, value in extraction.attributes.items():
+            # Strict-schema providers (OpenAI) must emit every attribute key, so an
+            # unstated one arrives as null; leave it out rather than store "None".
+            if value is None:
+                continue
             if isinstance(value, list):
                 attributes[key] = ", ".join(value)
             else:

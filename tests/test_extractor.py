@@ -122,6 +122,50 @@ class TestNERExtractorExtract:
         result = extractor.extract("My source text")
         assert result.source_text == "My source text"
 
+    _TABLE = "| cpd | MIC | CC50 |\n| --- | --- | --- |\n" + "".join(
+        f"| C{i} | {i}.5 | >50 |\n" for i in range(5)
+    )
+
+    def _bio_doc(self, n: int) -> lx.data.AnnotatedDocument:
+        return _make_annotated_doc(
+            [
+                lx.data.Extraction(extraction_class="bioactivity", extraction_text=f"{i}.5")
+                for i in range(n)
+            ]
+        )
+
+    def test_retries_once_when_table_values_are_missing(self):
+        extractor = NERExtractor(profile=TB)
+        extractor._run_extraction = MagicMock(side_effect=[self._bio_doc(0), self._bio_doc(10)])
+        result = extractor.extract(self._TABLE)
+        assert extractor._run_extraction.call_count == 2
+        assert len(result.bioactivities) == 10
+
+    def test_no_retry_when_table_values_came_back(self):
+        extractor = NERExtractor(profile=TB)
+        extractor._run_extraction = MagicMock(return_value=self._bio_doc(10))
+        extractor.extract(self._TABLE)
+        assert extractor._run_extraction.call_count == 1
+
+    def test_no_retry_for_profiles_without_bioactivity(self):
+        extractor = NERExtractor(profile=CHEMISTRY)
+        extractor._run_extraction = MagicMock(return_value=self._bio_doc(0))
+        extractor.extract(self._TABLE)
+        assert extractor._run_extraction.call_count == 1
+
+    def test_null_attributes_are_absent_not_none_strings(self):
+        # OpenAI strict mode returns every schema key, null when unstated.
+        extractor = self._extractor_with_mock(
+            [
+                lx.data.Extraction(
+                    extraction_class="bioactivity",
+                    extraction_text="IC50 = 3 nM",
+                    attributes={"value": "3", "strain": None, "assay": None},
+                )
+            ]
+        )
+        assert extractor.extract("text").bioactivities[0].attributes == {"value": "3"}
+
 
 class TestProviderRouting:
     """Explicit provider selection routes deterministically via ModelConfig,
@@ -181,6 +225,24 @@ class TestProviderRouting:
         assert pk["base_url"] == "http://ollama:11434"
         assert pk["num_ctx"] == 8192
 
+    def test_context_reaches_langextract_framed(self, monkeypatch):
+        from structflo.ner import extractor as extractor_mod
+
+        captured = {}
+
+        def fake_extract(**kwargs):
+            captured.update(kwargs)
+            return _make_annotated_doc([])
+
+        monkeypatch.setattr(extractor_mod.lx, "extract", fake_extract)
+        NERExtractor().extract("IC50s table", context="Deck on InhA inhibitors.")
+        ctx = captured["additional_context"]
+        assert ctx.startswith("Document context") and ctx.endswith("Deck on InhA inhibitors.")
+
+    def test_no_context_passes_no_additional_context(self, monkeypatch):
+        captured = self._run_and_capture(monkeypatch)
+        assert "additional_context" not in captured
+
     def test_cloud_provider_kwargs_carry_api_key(self, monkeypatch):
         captured = self._run_and_capture(
             monkeypatch, provider="openai", model_id="gpt-4o", api_key="sk-test"
@@ -233,6 +295,27 @@ class TestFilterExtractions:
         doc = _make_annotated_doc([])
         filtered = NERExtractor._filter_extractions(doc, {"compound_name"})
         assert len(filtered.extractions) == 0
+
+
+class TestDropContextCopies:
+    def test_drops_only_unaligned_extractions_found_in_context(self):
+        aligned = lx.data.Extraction(
+            extraction_class="target",
+            extraction_text="InhA",
+            char_interval=lx.data.CharInterval(start_pos=0, end_pos=4),
+        )
+        copied = lx.data.Extraction(extraction_class="compound_name", extraction_text="Isoniazid")
+        unaligned = lx.data.Extraction(extraction_class="compound_name", extraction_text="7a")
+        # In the context too, but also on the page: a missed alignment, not a copy.
+        on_page = lx.data.Extraction(extraction_class="disease", extraction_text="malaria")
+        doc = lx.data.AnnotatedDocument(
+            text="InhA IC50s for 7a; malaria panel",
+            extractions=[aligned, copied, unaligned, on_page],
+        )
+        kept = NERExtractor._drop_context_copies(
+            doc, "InhA inhibitors that match isoniazid, and a malaria screen"
+        )
+        assert kept.extractions == [aligned, unaligned, on_page]
 
 
 class TestBuildExamples:
@@ -298,8 +381,20 @@ class TestTBProfile:
             }
             assert {"value", "unit", "assay_type", "compound_name", "assay"} <= keys, profile.name
 
+    def test_tb_bioactivity_schema_has_context_slots(self):
+        """TB gives what a value was measured against (target, strain) and with
+        (combination) their own slots, apart from assay."""
+        keys = {
+            k
+            for ex in TB.examples
+            for e in ex.extractions
+            if e.extraction_class == "bioactivity"
+            for k in (e.attributes or {})
+        }
+        assert {"target", "strain", "combination"} <= keys
+
     def test_tb_examples_count(self):
-        assert len(TB.examples) == 6
+        assert len(TB.examples) == 7
         assert len(TB_CHEMISTRY.examples) == 2
         assert len(TB_BIOLOGY.examples) == 2
 

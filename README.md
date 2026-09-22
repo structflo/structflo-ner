@@ -343,10 +343,19 @@ Each bioactivity carries its measurement in `attributes`:
 | `assay_type`    | `CC50`                      | the endpoint (IC50, MIC90, GI50, ED90, ...)                |
 | `assay`         | `HepG2 MTT`                 | assay, cell line or read-out the value was measured in     |
 | `compound_name` | `8t`                        | compound the value belongs to                              |
-| `strain`        | `H37Rv`                     | organism or strain (`TB` profile only)                     |
+| `target`        | `InhA`                      | protein measured against (`TB` profile only)               |
+| `strain`        | `H37Rv`                     | organism, strain or virus measured against (`TB` only)     |
+| `combination`   | `meropenem`                 | second compound dosed alongside (`TB` profile only)        |
 
-An attribute the text does not state comes back as the string `"None"` with
-providers that enforce a strict schema (OpenAI), or is absent otherwise.
+An attribute the text does not state is absent from `attributes`.
+
+A table on one page often names its target only on another. Pass text from
+elsewhere in the document (its title or summary) as `context`; the model uses it
+to fill attributes the page leaves unstated, and extracts nothing from it:
+
+```python
+result = extractor.extract(page_text, context=document_summary)
+```
 
 
 ## Notebooks

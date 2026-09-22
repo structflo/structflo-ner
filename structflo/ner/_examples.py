@@ -625,6 +625,7 @@ _TB_EXAMPLE_3 = lx.data.ExampleData(
                 "assay_type": "IC50",
                 "compound_name": "Compound 14a",
                 "assay": "biochemical assay",
+                "target": "InhA",
             },
         ),
         lx.data.Extraction(
@@ -853,6 +854,7 @@ _TB_EXAMPLE_5 = lx.data.ExampleData(
                 "unit": "nM",
                 "assay_type": "IC50",
                 "compound_name": "SACC-3060",
+                "target": "DprE1",
             },
         ),
         lx.data.Extraction(
@@ -980,6 +982,99 @@ _TB_EXAMPLE_6 = lx.data.ExampleData(
     ],
 )
 
+# Strain panel: organism column headers are the strain, a protein column the
+# target, a cytotoxicity column the assay; a column dosed with a second drug
+# names the combination partner. The disease stays a disease entity.
+_TB_EXAMPLE_7 = lx.data.ExampleData(
+    text=(
+        "Table 3. Antibacterial activity against hospital-acquired pneumonia isolates\n\n"
+        "| Cpd | ID | E. coli ATCC 25922 | K. pneumoniae BAA-1705 | A. baumannii ATCC 19606 "
+        "| ATCC 19606 + polymyxin B | HepG2 | hERG |\n"
+        "| --- | --- | --- | --- | --- | --- | --- | --- |\n"
+        "| 9c | CHEMBL5311027 | 0.25 | 1 | >64 | 2 | >100 | 12.5 |\n\n"
+        "MIC (µg/mL); polymyxin B at 0.5 µg/mL. HepG2: CC50 (µM). hERG: IC50 (µM)."
+    ),
+    extractions=[
+        lx.data.Extraction(
+            extraction_class="disease",
+            extraction_text="hospital-acquired pneumonia",
+            attributes={"therapeutic_area": "infectious disease"},
+        ),
+        lx.data.Extraction(
+            extraction_class="compound_name",
+            extraction_text="CHEMBL5311027",
+            attributes={"synonyms": "9c"},
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="0.25",
+            attributes={
+                "value": "0.25",
+                "unit": "µg/mL",
+                "assay_type": "MIC",
+                "strain": "E. coli ATCC 25922",
+                "compound_name": "CHEMBL5311027",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="1",
+            attributes={
+                "value": "1",
+                "unit": "µg/mL",
+                "assay_type": "MIC",
+                "strain": "K. pneumoniae BAA-1705",
+                "compound_name": "CHEMBL5311027",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text=">64",
+            attributes={
+                "value": ">64",
+                "unit": "µg/mL",
+                "assay_type": "MIC",
+                "strain": "A. baumannii ATCC 19606",
+                "compound_name": "CHEMBL5311027",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="2",
+            attributes={
+                "value": "2",
+                "unit": "µg/mL",
+                "assay_type": "MIC",
+                "strain": "ATCC 19606",
+                "combination": "polymyxin B",
+                "compound_name": "CHEMBL5311027",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text=">100",
+            attributes={
+                "value": ">100",
+                "unit": "µM",
+                "assay_type": "CC50",
+                "compound_name": "CHEMBL5311027",
+                "assay": "HepG2",
+            },
+        ),
+        lx.data.Extraction(
+            extraction_class="bioactivity",
+            extraction_text="12.5",
+            attributes={
+                "value": "12.5",
+                "unit": "µM",
+                "assay_type": "IC50",
+                "compound_name": "CHEMBL5311027",
+                "target": "hERG",
+            },
+        ),
+    ],
+)
+
 TB_EXAMPLES: list[lx.data.ExampleData] = [
     _TB_EXAMPLE_1,
     _TB_EXAMPLE_2,
@@ -987,6 +1082,7 @@ TB_EXAMPLES: list[lx.data.ExampleData] = [
     _TB_EXAMPLE_4,
     _TB_EXAMPLE_5,
     _TB_EXAMPLE_6,
+    _TB_EXAMPLE_7,
 ]
 
 TB_CHEMISTRY_EXAMPLES: list[lx.data.ExampleData] = [

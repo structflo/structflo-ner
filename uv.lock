@@ -2170,7 +2170,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "langextract", specifier = ">=1.6.0" },
+    { name = "langextract", specifier = ">=1.7.0" },
     { name = "pandas", marker = "extra == 'dataframe'", specifier = ">=1.5" },
     { name = "pyyaml", specifier = ">=6.0" },
     { name = "rapidfuzz", specifier = ">=3.0" },

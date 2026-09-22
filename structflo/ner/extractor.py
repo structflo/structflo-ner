@@ -3,14 +3,42 @@
 from __future__ import annotations
 
 import logging
+import re
 
 import langextract as lx
 
+from structflo.ner import _prompts
 from structflo.ner._entities import NERResult
 from structflo.ner._mapping import annotated_doc_to_result
 from structflo.ner.profiles import FULL, EntityProfile
 
 logger = logging.getLogger(__name__)
+
+# A table cell holding only a value: '0.94', '>32', '2.4*', '0.62µM'.
+_VALUE_CELL = re.compile(r"^[<>≤≥~=]*\s*\d[\d,]*\.?\d*\s*\*?\s*(%|[nµu]M|µg/mL|mg/kg)?$")
+
+
+def _bioactivity_count(doc: lx.data.AnnotatedDocument) -> int:
+    return sum(1 for ext in doc.extractions if ext.extraction_class == "bioactivity")
+
+
+def _table_values_dropped(text: str, doc: lx.data.AnnotatedDocument) -> bool:
+    """True when fewer than half of a page's table values came back as bioactivities.
+
+    Models now and then return a complete, valid answer that lists a table's
+    compounds but leaves out its values. On the ChEMBL-gold decks this fires on
+    ~2% of pages and catches ~60% of such dropouts.
+    """
+    # ponytail: markdown tables only; values in prose and qualitative results
+    # are not checked, so those dropouts still pass silently.
+    cells = sum(
+        1
+        for line in text.splitlines()
+        if line.lstrip().startswith("|")
+        for cell in line.strip().strip("|").split("|")
+        if _VALUE_CELL.match(cell.strip())
+    )
+    return cells >= 5 and _bioactivity_count(doc) < 0.5 * cells
 
 
 class NERExtractor:
@@ -90,12 +118,17 @@ class NERExtractor:
         self,
         text: str | list[str],
         profile: EntityProfile | None = None,
+        context: str | None = None,
     ) -> NERResult | list[NERResult]:
         """Extract drug discovery entities from text.
 
         Args:
             text: Input text (or list of texts) to process.
             profile: Override the default profile for this call only.
+            context: Text from elsewhere in the same document (its title or
+                summary). The model reads it to fill attributes the text leaves
+                unstated, such as the target of a table whose target is named
+                only on another page; no entities are extracted from it.
 
         Returns:
             A :class:`NERResult` for a single string input, or a list of
@@ -107,7 +140,13 @@ class NERExtractor:
 
         results = []
         for single_text in texts:
-            doc = self._run_extraction(single_text, active_profile)
+            doc = self._run_extraction(single_text, active_profile, context)
+            if "bioactivity" in active_profile.entity_classes and _table_values_dropped(
+                single_text, doc
+            ):
+                logger.warning("Table values missing from extraction; retrying once.")
+                retry = self._run_extraction(single_text, active_profile, context)
+                doc = max(doc, retry, key=_bioactivity_count)
             results.append(annotated_doc_to_result(doc, single_text))
 
         return results if is_batch else results[0]
@@ -198,6 +237,7 @@ class NERExtractor:
         self,
         text: str,
         profile: EntityProfile,
+        context: str | None = None,
     ) -> lx.data.AnnotatedDocument:
         """Call lx.extract and return the AnnotatedDocument."""
         examples = self._build_examples(profile)
@@ -206,6 +246,8 @@ class NERExtractor:
         kwargs: dict = dict(self._langextract_kwargs)
         kwargs.setdefault("use_schema_constraints", True)
         kwargs.setdefault("show_progress", False)
+        if context:
+            kwargs["additional_context"] = _prompts.DOCUMENT_CONTEXT + context
 
         if self._provider is not None:
             # Explicit provider → deterministic routing via ModelConfig.
@@ -236,4 +278,29 @@ class NERExtractor:
 
         # Post-process: drop extractions with hallucinated entity classes
         allowed = set(profile.entity_classes)
-        return self._filter_extractions(doc, allowed)
+        doc = self._filter_extractions(doc, allowed)
+        if context:
+            doc = self._drop_context_copies(doc, context)
+        return doc
+
+    @staticmethod
+    def _drop_context_copies(
+        doc: lx.data.AnnotatedDocument,
+        context: str,
+    ) -> lx.data.AnnotatedDocument:
+        """Drop extractions the model took from the context instead of the text.
+
+        The prompt forbids it, but models still extract from the context now and
+        then. Such an extraction does not align to the text, and its text occurs
+        in the context but not in the text (an unaligned one that is in the text
+        is a missed alignment, not a copy).
+        """
+        ctx, text = context.casefold(), doc.text.casefold()
+        kept = [
+            ext
+            for ext in doc.extractions
+            if ext.char_interval is not None
+            or ext.extraction_text.casefold() not in ctx
+            or ext.extraction_text.casefold() in text
+        ]
+        return lx.data.AnnotatedDocument(text=doc.text, extractions=kept)
